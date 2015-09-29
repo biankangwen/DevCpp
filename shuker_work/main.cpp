@@ -340,7 +340,7 @@ bool isThreeOfAKind(vector<myCard> &vecCards) {
 bool isTwoPairs(vector<myCard> &vecCards) {
 }
 
-bool isTwoPairs(vector<myCard> &vecCards) {
+bool isOnePair(vector<myCard> &vecCards) {
 }
 
 //按点数降序排列
