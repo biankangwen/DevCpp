@@ -2,6 +2,8 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <fstream>
+#include <windows.h>  //Sleep
 
 #include "mysql_escape.h"
 
@@ -15,6 +17,13 @@ void testMysqlEscape() {
   
   cout << "---func testMysqlEscape() end---";
   system("PAUSE");
+  return;
+}
+
+void myFileOp() {
+  ofstream ofile("a.txt",ios::app);
+  ofile << "haha" << ":[" << 5 << "]" << endl;
+  ofile.close();
   return;
 }
 
@@ -102,8 +111,9 @@ void puzzleA() {
  */
 class myCard {
 public:
-      myCard(int a, string b) {
-          if((a>=1 && a<=13 && (b=="s"||b=="h"||b=="c"||b=="d")) || (a>=14 && a<=15 && b=="j")) {
+      //a-点数 b-花色 14-留给A 15-black j 16-red j
+	  myCard(int a, string b) {
+          if((a>=1 && a<=13 && (b=="s"||b=="h"||b=="c"||b=="d")) || (a>=15 && a<=16 && b=="j")) {
               iFigure = a;
               strSuit = b;
               bFlag = true;
@@ -143,10 +153,10 @@ public:
            else if(iFigure==13) {
                snprintf(szRes,sizeof(szRes),"K%s",strSuit.c_str());
            }
-           else if(iFigure==14) {
+           else if(iFigure==15) {
                snprintf(szRes,sizeof(szRes),"B%s",strSuit.c_str());
            }
-           else if(iFigure==15) {
+           else if(iFigure==16) {
                snprintf(szRes,sizeof(szRes),"R%s",strSuit.c_str());
            }
            return szRes;
@@ -178,7 +188,7 @@ class myPoker {
 public:
       myPoker(int iNum, int iPack=1) {
           map<int,string> mapSuit;
-          mapSuit[1] = "s";mapSuit[2] = "h";mapSuit[3] = "c";mapSuit[4] = "d";mapSuit[5] = "j";
+          mapSuit[1] = "s"; mapSuit[2] = "h"; mapSuit[3] = "c"; mapSuit[4] = "d"; mapSuit[5] = "j";
           if(iNum == 52) {
               for(int p=1;p<=iPack;p++) {
                   for(int i=1;i<=4;i++) {
@@ -197,8 +207,8 @@ public:
                           vecCards.push_back(oCard);
                       }
                   }
-                  for(int j=14;j<=15;j++) {
-                      myCard oCard(14,mapSuit[5]);
+                  for(int j=15;j<=16;j++) {
+                      myCard oCard(j,mapSuit[5]);
                       vecCards.push_back(oCard);
                   }
               }
@@ -208,17 +218,19 @@ public:
           }
       }
       
-      void shuffle() {
-          srand(time(NULL));
+      unsigned int shuffle(unsigned int uiSeed) {
+		  srand(uiSeed);  //不能直接用time(NULL) 否则在for循环里洗牌同1秒内种子都相同，多次执行同样的序列洗牌后牌会被回归原样
           int iIdx;
           int iSize = (int)vecCards.size();
           for(int i=0;i<iSize;i++) {
               iIdx = i + rand()%(iSize-i);
               swap(vecCards[iIdx], vecCards[i]);
           }
-          return;
+		  unsigned int uiNextSeed = rand();
+          return uiNextSeed;
       }
       
+	  //uiIdx-从1起
       void getCard(unsigned int uiIdx, bool bIdx=false) {
            if(uiIdx>vecCards.size() || uiIdx==0) {
                 cout << "---error: this is a invalid card idx---" << endl;
@@ -280,7 +292,7 @@ bool isStraight(vector<myCard> &vecCards) {
         (vecFigure[0]+4==vecFigure[4])) {
          return true;
      }
-     else if(vecFigure[0]==1 && vecFigure[1]==10 && vecFigure[2]==11 && vecFigure[3]==12 && vecFigure[4]==13) {
+     else if(vecFigure[0]==1 && vecFigure[1]==10 && vecFigure[2]==11 && vecFigure[3]==12 && vecFigure[4]==13) {  //TJQKA
          return true;
      }
      else {
@@ -316,19 +328,41 @@ bool isRoyalStraightFlush(vector<myCard> &vecCards) {
      }
 }
 
+bool isFourOfAKind(vector<myCard> &vecCards) {
+}
+
+bool isFullHouse(vector<myCard> &vecCards) {
+}
+
+bool isThreeOfAKind(vector<myCard> &vecCards) {
+}
+
+bool isTwoPairs(vector<myCard> &vecCards) {
+}
+
+bool isTwoPairs(vector<myCard> &vecCards) {
+}
+
+//按点数降序排列
+void getHighHand(vector<myCard> &vecCards) {
+}
+
 //模拟发牌 
 void myPokerTestA() {
     myPoker oPoker(52);
-    oPoker.shuffle();
+    oPoker.shuffle(time(NULL));
     unsigned int i=0;
     cout << "---starting hand---" << endl;
     i++;oPoker.getCard(i);i++;oPoker.getCard(i);
     cout << "---flop---" << endl;
-    i++;i++;oPoker.getCard(i);i++;oPoker.getCard(i);i++;oPoker.getCard(i);
+    i++;  //cut
+	i++;oPoker.getCard(i);i++;oPoker.getCard(i);i++;oPoker.getCard(i);
     cout << "---turn---" << endl;
-    i++;i++;oPoker.getCard(i);
+    i++;  //cut
+	i++;oPoker.getCard(i);
     cout << "---river---" << endl;
-    i++;i++;oPoker.getCard(i);
+    i++;  //cut
+	i++;oPoker.getCard(i);
     cout << "---func myPokerTestA() end---" << endl;
     system("PAUSE");
     return;
@@ -337,25 +371,28 @@ void myPokerTestA() {
 void myPokerTestB() {
     myPoker oPoker(52);
     vector<myCard> vec;
-    for(int i=0;i<100;i++) {
-        oPoker.shuffle();
-        oPoker.get5Cards(vec);
-        if(isStraight(vec)) {
-            cout << "---straight---:" << i << endl;
-            for(unsigned int ui=0;ui<vec.size();ui++) {
-                cout << vec[ui].prtCard() << endl;
-            }
-            cout << "------" << endl;
-        }
-        if(isFlush(vec)) {
-            cout << "---flush---:" << i << endl;
-            for(unsigned int ui=0;ui<vec.size();ui++) {
-                cout << vec[ui].prtCard() << endl;
-            }
-            cout << "------" << endl;
-        }
+	unsigned int uiSeed = time(NULL);
+	for(int i=0;i<5;i++) {
+		for(int j=1;j<=100;j++) {  //每一轮sleep一下
+			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子 如果是固定种子则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
+			oPoker.get5Cards(vec);
+			if(isStraight(vec)) {
+				cout << "---straight---:" << i*100+j << endl;
+				for(unsigned int ui=0;ui<vec.size();ui++) {
+					cout << vec[ui].prtCard() << endl;
+				}
+				cout << "------" << endl;
+			}
+			if(isFlush(vec)) {
+				cout << "---flush---:" << i*100+j << endl;
+				for(unsigned int ui=0;ui<vec.size();ui++) {
+					cout << vec[ui].prtCard() << endl;
+				}
+				cout << "------" << endl;
+			}
+		}
+		Sleep(100);  //ms
     }
-    
     cout << "---func myPokerTestB() end---" << endl;
     system("PAUSE");
     return;
@@ -384,6 +421,7 @@ void myPokerTestC() {
 int main(int argc, char *argv[])
 {
       //testMysqlEscape();
+	  //myFileOp();
 	  //myTime();
       
       //puzzleA();
