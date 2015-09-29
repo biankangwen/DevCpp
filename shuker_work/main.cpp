@@ -411,10 +411,10 @@ bool isThreeOfAKind(vector<myCard> &vecCards) {
 		if(it->second == 3) {
 			return true;
 		}
-		else if(++it->second == 3) {
+		else if((++it)->second == 3) {  //++it->x等同++(it->x); (it++)->x取到it->x的值; it++->x等同(it++)->x
 			return true;
 		}
-		else if(++it->second == 3) {
+		else if((++it)->second == 3) {
 			return true;
 		}
 		else {
@@ -449,7 +449,7 @@ bool isTwoPairs(vector<myCard> &vecCards) {
 		if(it->second == 2) {
 			return true;
 		}
-		else if(++it->second == 2) {
+		else if((++it)->second == 2) {
 			return true;
 		}
 		else {
@@ -547,11 +547,11 @@ void myPokerTestB() {
 //测试牌型判定单个函数 
 void myPokerTestC() {
     vector<myCard> vec;
-    myCard oCard1(12,"h");vec.push_back(oCard1);
-    myCard oCard2(10,"h");vec.push_back(oCard2);
-    myCard oCard3(1,"h");vec.push_back(oCard3);
-    myCard oCard4(13,"s");vec.push_back(oCard4);
-    myCard oCard5(11,"h");vec.push_back(oCard5);
+    myCard oCard1(5,"c");vec.push_back(oCard1);
+    myCard oCard2(3,"h");vec.push_back(oCard2);
+    myCard oCard3(7,"s");vec.push_back(oCard3);
+    myCard oCard4(1,"c");vec.push_back(oCard4);
+    myCard oCard5(10,"d");vec.push_back(oCard5);
 	for(unsigned int ui=0;ui<vec.size();ui++) {
 		cout << vec[ui].prtCard() << endl;
 	}
