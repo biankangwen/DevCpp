@@ -260,7 +260,7 @@ private:
 
 bool isFlush(vector<myCard> &vecCards) {
      if(vecCards.size() != 5) {
-         cout << "---error: a invalid cards num---" << endl;
+         cout << "---error: [isFlush]a invalid cards num" << vecCards.size() << "---" << endl;
          return false;
      }
      
@@ -275,11 +275,13 @@ bool isFlush(vector<myCard> &vecCards) {
      }
 }
 
-bool isStraight(vector<myCard> &vecCards) {
+bool isStraight(vector<myCard> &vecCards, int &iTJQKA) {
      if(vecCards.size() != 5) {
-         cout << "---error: a invalid cards num---" << endl;
+         cout << "---error: [isStraight]a invalid cards num" << vecCards.size() << "---" << endl;
          return false;
      }
+	 
+	 iTJQKA = 0;
      
      vector<int> vecFigure;
      for(unsigned int ui=0;ui<vecCards.size();ui++) {
@@ -293,20 +295,23 @@ bool isStraight(vector<myCard> &vecCards) {
          return true;
      }
      else if(vecFigure[0]==1 && vecFigure[1]==10 && vecFigure[2]==11 && vecFigure[3]==12 && vecFigure[4]==13) {  //TJQKA
-         return true;
+		iTJQKA = 1;
+        return true;
      }
      else {
          return false;
      }
 }
 
-bool isStraightFlush(vector<myCard> &vecCards) {
+bool isStraightFlush(vector<myCard> &vecCards, int &iTJQKA) {
      if(vecCards.size() != 5) {
-         cout << "---error: a invalid cards num---" << endl;
+         cout << "---error: [isStraightFlush]a invalid cards num" << vecCards.size() << "---" << endl;
          return false;
      }
      
-     if(isFlush(vecCards) && isStraight(vecCards)) {
+	 iTJQKA = 0;
+	 
+     if(isFlush(vecCards) && isStraight(vecCards, iTJQKA)) {
          return true;
      }
      else {
@@ -316,11 +321,12 @@ bool isStraightFlush(vector<myCard> &vecCards) {
 
 bool isRoyalStraightFlush(vector<myCard> &vecCards) {
      if(vecCards.size() != 5) {
-         cout << "---error: a invalid cards num---" << endl;
+         cout << "---error: [isRoyalStraightFlush]a invalid cards num" << vecCards.size() << "---" << endl;
          return false;
      }
      
-     if(isStraightFlush(vecCards) && (vecCards[0].getFigure()==1 && vecCards[1].getFigure()==10)) {
+	 int iTJQKA = 0;
+     if(isStraightFlush(vecCards, iTJQKA) && iTJQKA) {
          return true;
      }
      else {
@@ -329,18 +335,157 @@ bool isRoyalStraightFlush(vector<myCard> &vecCards) {
 }
 
 bool isFourOfAKind(vector<myCard> &vecCards) {
+	if(vecCards.size() != 5) {
+		cout << "---error: [isFourOfAKind]a invalid cards num" << vecCards.size() << "---" << endl;
+		return false;
+	}
+	
+	map<int,int> mapFigureCnt;
+	map<int,int>::iterator it;
+	for(unsigned int ui=0;ui<vecCards.size();ui++) {
+		it = mapFigureCnt.find(vecCards[ui].getFigure());
+		if(it == mapFigureCnt.end()) {
+			mapFigureCnt[vecCards[ui].getFigure()] = 1;
+		}
+		else {
+			mapFigureCnt[vecCards[ui].getFigure()] += 1;
+		}
+    }
+	
+	it = mapFigureCnt.begin();
+	if(mapFigureCnt.size()==2 && (it->second==1 || it->second==4)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 bool isFullHouse(vector<myCard> &vecCards) {
+	if(vecCards.size() != 5) {
+		cout << "---error: [isFullHouse]a invalid cards num" << vecCards.size() << "---" << endl;
+		return false;
+	}
+	
+	map<int,int> mapFigureCnt;
+	map<int,int>::iterator it;
+	for(unsigned int ui=0;ui<vecCards.size();ui++) {
+		it = mapFigureCnt.find(vecCards[ui].getFigure());
+		if(it == mapFigureCnt.end()) {
+			mapFigureCnt[vecCards[ui].getFigure()] = 1;
+		}
+		else {
+			mapFigureCnt[vecCards[ui].getFigure()] += 1;
+		}
+    }
+	
+	it = mapFigureCnt.begin();
+	if(mapFigureCnt.size()==2 && (it->second==2 || it->second==3)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 bool isThreeOfAKind(vector<myCard> &vecCards) {
+	if(vecCards.size() != 5) {
+		cout << "---error: [isThreeOfAKind]a invalid cards num" << vecCards.size() << "---" << endl;
+		return false;
+	}
+	
+	map<int,int> mapFigureCnt;
+	map<int,int>::iterator it;
+	for(unsigned int ui=0;ui<vecCards.size();ui++) {
+		it = mapFigureCnt.find(vecCards[ui].getFigure());
+		if(it == mapFigureCnt.end()) {
+			mapFigureCnt[vecCards[ui].getFigure()] = 1;
+		}
+		else {
+			mapFigureCnt[vecCards[ui].getFigure()] += 1;
+		}
+    }
+	
+	it = mapFigureCnt.begin();
+	if(mapFigureCnt.size() == 3) {
+		if(it->second == 3) {
+			return true;
+		}
+		else if(++it->second == 3) {
+			return true;
+		}
+		else if(++it->second == 3) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
 }
 
 bool isTwoPairs(vector<myCard> &vecCards) {
+	if(vecCards.size() != 5) {
+		cout << "---error: [isTwoPairs]a invalid cards num" << vecCards.size() << "---" << endl;
+		return false;
+	}
+	
+	map<int,int> mapFigureCnt;
+	map<int,int>::iterator it;
+	for(unsigned int ui=0;ui<vecCards.size();ui++) {
+		it = mapFigureCnt.find(vecCards[ui].getFigure());
+		if(it == mapFigureCnt.end()) {
+			mapFigureCnt[vecCards[ui].getFigure()] = 1;
+		}
+		else {
+			mapFigureCnt[vecCards[ui].getFigure()] += 1;
+		}
+    }
+	
+	it = mapFigureCnt.begin();
+	if(mapFigureCnt.size() == 3) {
+		if(it->second == 2) {
+			return true;
+		}
+		else if(++it->second == 2) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
 }
 
 bool isOnePair(vector<myCard> &vecCards) {
+	if(vecCards.size() != 5) {
+		cout << "---error: [isOnePair]a invalid cards num" << vecCards.size() << "---" << endl;
+		return false;
+	}
+	
+	map<int,int> mapFigureCnt;
+	map<int,int>::iterator it;
+	for(unsigned int ui=0;ui<vecCards.size();ui++) {
+		it = mapFigureCnt.find(vecCards[ui].getFigure());
+		if(it == mapFigureCnt.end()) {
+			mapFigureCnt[vecCards[ui].getFigure()] = 1;
+		}
+		else {
+			mapFigureCnt[vecCards[ui].getFigure()] += 1;
+		}
+    }
+	
+	it = mapFigureCnt.begin();
+	if(mapFigureCnt.size() == 4) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 //按点数降序排列
@@ -376,7 +521,8 @@ void myPokerTestB() {
 		for(int j=1;j<=100;j++) {  //每一轮sleep一下
 			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子 如果是固定种子则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
 			oPoker.get5Cards(vec);
-			if(isStraight(vec)) {
+			int iTJQKA = 0;
+			if(isStraight(vec, iTJQKA)) {
 				cout << "---straight---:" << i*100+j << endl;
 				for(unsigned int ui=0;ui<vec.size();ui++) {
 					cout << vec[ui].prtCard() << endl;
@@ -404,13 +550,38 @@ void myPokerTestC() {
     myCard oCard1(12,"h");vec.push_back(oCard1);
     myCard oCard2(10,"h");vec.push_back(oCard2);
     myCard oCard3(1,"h");vec.push_back(oCard3);
-    myCard oCard4(13,"h");vec.push_back(oCard4);
+    myCard oCard4(13,"s");vec.push_back(oCard4);
     myCard oCard5(11,"h");vec.push_back(oCard5);
-    if(isStraight(vec)) {
-        cout << "---straight---" << endl;
+	for(unsigned int ui=0;ui<vec.size();ui++) {
+		cout << vec[ui].prtCard() << endl;
+	}
+	int iTJQKA = 0;
+    if(isStraight(vec, iTJQKA)) {
+        cout << "---Straight---" << endl;
     }
-     if(isFlush(vec)) {
-        cout << "---flush---" << endl;
+    if(isFlush(vec)) {
+        cout << "---Flush---" << endl;
+    }
+	if(isStraightFlush(vec, iTJQKA)) {
+        cout << "---StraightFlush---" << endl;
+    }
+	if(isRoyalStraightFlush(vec)) {
+        cout << "---RoyalStraightFlush---" << endl;
+    }
+	if(isFourOfAKind(vec)) {
+        cout << "---FourOfAKind---" << endl;
+    }
+	if(isFullHouse(vec)) {
+        cout << "---FullHouse---" << endl;
+    }
+	if(isThreeOfAKind(vec)) {
+        cout << "---ThreeOfAKind---" << endl;
+    }
+	if(isTwoPairs(vec)) {
+        cout << "---TwoPairs---" << endl;
+    }
+	if(isOnePair(vec)) {
+        cout << "---OnePair---" << endl;
     }
     
     cout << "---func myPokerTestC() end---" << endl;
@@ -428,7 +599,9 @@ int main(int argc, char *argv[])
       
       //myPokerTestA();
       
-      myPokerTestB();
+      //myPokerTestB();
+	  
+	  myPokerTestC();
       
     system("PAUSE");
     return EXIT_SUCCESS;
