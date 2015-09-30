@@ -10,36 +10,47 @@
 using namespace std;
 
 void testMysqlEscape() {
+  cout << "---###---func testMysqlEscape() start---";
+  
   string a = "\'xx\"";
   string b = EscapeString2(a);
   printf("a:%s\n", a.c_str());
   printf("b:%s\n", b.c_str());
   
-  cout << "---func testMysqlEscape() end---";
+  cout << "---###---func testMysqlEscape() end---";
   system("PAUSE");
   return;
 }
 
 void myFileOp() {
+  cout << "---###---func myFileOp() start---";
+  
   ofstream ofile("a.txt",ios::app);
   ofile << "haha" << ":[" << 5 << "]" << endl;
   ofile.close();
+  
+  cout << "---###---func myFileOp() end---";
+  system("PAUSE");
   return;
 }
 
 void myTime() {
-     time_t tTime = time(NULL);
+     cout << "---###---func myTime() start---";
+	 
+	 time_t tTime = time(NULL);
      char szTime[16] = {0};
      strftime(szTime,sizeof(szTime),"%X",localtime(&tTime));
      printf("tTime:%u\nszTime:%s\n",tTime,szTime);
      
-     cout << "---func myTime() end---";
+     cout << "---###---func myTime() end---";
      system("PAUSE");
      return;
 }
 
 void puzzleA() {
-     map<int, vector<string> > mapSum;
+     cout << "---###---func puzzleA() start---";
+	 
+	 map<int, vector<string> > mapSum;
      map<int, map<string, int> > mapProduct;  //因为乙先问 则乙的数据结构和甲不同 
      char szNumber[128] = {0};
      for(int i=1; i<=30; i++) {
@@ -98,7 +109,7 @@ void puzzleA() {
          }
      }*/
      
-     cout << "---func puzzleA() end---";
+     cout << "---###---func puzzleA() end---";
      system("PAUSE");
      return;
 }
@@ -257,6 +268,18 @@ public:
 private:
       vector<myCard> vecCards;
 };
+
+/**
+ *|RoyalStraightFlush|Y| | | | | | | | |
+ *|StraightFlush     |M|Y| | | | | | | |
+ *|FourOfAKind       | | |Y| | | | | | |
+ *|FullHouse         | | | |Y| | | | | |
+ *|Flush             |M|M| | |Y| | | | |
+ *|Straight          |M|M| | | |Y| | | |
+ *|ThreeOfAKind      | | | | | | |Y| | |
+ *|TwoPairs          | | | | | | | |Y| |
+ *|OnePair           | | | | | | | | |Y|
+**/
 
 bool isFlush(vector<myCard> &vecCards) {
      if(vecCards.size() != 5) {
@@ -494,7 +517,9 @@ void getHighHand(vector<myCard> &vecCards) {
 
 //模拟发牌 
 void myPokerTestA() {
-    myPoker oPoker(52);
+    cout << "---###---func myPokerTestA() start---" << endl;
+	
+	myPoker oPoker(52);
     oPoker.shuffle(time(NULL));
     unsigned int i=0;
     cout << "---starting hand---" << endl;
@@ -508,71 +533,132 @@ void myPokerTestA() {
     cout << "---river---" << endl;
     i++;  //cut
 	i++;oPoker.getCard(i);
-    cout << "---func myPokerTestA() end---" << endl;
+	
+    cout << "---###---func myPokerTestA() end---" << endl;
     system("PAUSE");
     return;
 }
 
 void myPokerTestB() {
-    myPoker oPoker(52);
+    cout << "---###---func myPokerTestB() start---" << endl;
+	
+	myPoker oPoker(52);
     vector<myCard> vec;
+	int iRoyalStraightFlushCnt = 0;
+	int iStraightFlushCnt = 0;
+	int iFourOfAKindCnt = 0;
+	int iFullHouseCnt = 0;
+	int iFlushCnt = 0;
+	int iStraightCnt = 0;
+	int iThreeOfAKindCnt = 0;
+	int iTwoPairsCnt = 0;
+	int iOnePairCnt = 0;
+	int iHighHandCnt = 0;
+	int iX = 10000;
+	int iY = 100;  //应该 大大小于MAX_RAND 同一轮内不能一直使用shuffle函数返回的rand序列作为种子
+	
 	unsigned int uiSeed = time(NULL);
-	for(int i=0;i<5;i++) {
-		for(int j=1;j<=100;j++) {  //每一轮sleep一下
-			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子 如果是固定种子则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
+	for(int i=0;i<iX;i++) {
+		Sleep(100);  //ms
+		if(i%15 == 0) {  //每15*100ms 换种子 不再采用shuffle函数返回的rand序列
+			uiSeed = time(NULL);
+		}
+		for(int j=1;j<=iY;j++) {  //每一轮sleep一下 防止cpu过高
+			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子(shuffle函数返回的rand序列) 如果是固定种子则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
 			oPoker.get5Cards(vec);
 			int iTJQKA = 0;
-			if(isStraight(vec, iTJQKA)) {
-				cout << "---straight---:" << i*100+j << endl;
-				for(unsigned int ui=0;ui<vec.size();ui++) {
-					cout << vec[ui].prtCard() << endl;
-				}
-				cout << "------" << endl;
+			if(isRoyalStraightFlush(vec)) {
+				iRoyalStraightFlushCnt++;
+				//cout << "---RoyalStraightFlush---" << endl;
 			}
-			if(isFlush(vec)) {
-				cout << "---flush---:" << i*100+j << endl;
-				for(unsigned int ui=0;ui<vec.size();ui++) {
-					cout << vec[ui].prtCard() << endl;
-				}
-				cout << "------" << endl;
+			else if(isStraightFlush(vec, iTJQKA)) {
+				iStraightFlushCnt++;
+				//cout << "---StraightFlush---" << endl;
+			}
+			else if(isFourOfAKind(vec)) {
+				iFourOfAKindCnt++;
+				//cout << "---FourOfAKind---" << endl;
+			}
+			else if(isFullHouse(vec)) {
+				iFullHouseCnt++;
+				//cout << "---FullHouse---" << endl;
+			}
+			else if(isFlush(vec)) {
+				iFlushCnt++;
+				//cout << "---Flush---" << endl;
+			}
+			else if(isStraight(vec, iTJQKA)) {
+				iStraightCnt++;
+				//cout << "---Straight---" << endl;
+			}
+			else if(isThreeOfAKind(vec)) {
+				iThreeOfAKindCnt++;
+				//cout << "---ThreeOfAKind---" << endl;
+			}
+			else if(isTwoPairs(vec)) {
+				iTwoPairsCnt++;
+				//cout << "---TwoPairs---" << endl;
+			}
+			else if(isOnePair(vec)) {
+				iOnePairCnt++;
+				//cout << "---OnePair---" << endl;
+			}
+			else {
+				iHighHandCnt++;
+				//cout << "---HighHand---" << endl;
 			}
 		}
-		Sleep(100);  //ms
     }
-    cout << "---func myPokerTestB() end---" << endl;
+	
+	int iTotalCnt = iX*iY;
+	cout << "---Total: " << iTotalCnt << "---" << endl;
+	cout << "---RoyalStraightFlush: " << iRoyalStraightFlushCnt << "/" << iTotalCnt << "=" << iRoyalStraightFlushCnt*1.0/iTotalCnt << endl;
+	cout << "---     StraightFlush: " << iStraightFlushCnt << "/" << iTotalCnt << "=" << iStraightFlushCnt*1.0/iTotalCnt << endl;
+	cout << "---       FourOfAKind: " << iFourOfAKindCnt << "/" << iTotalCnt << "=" << iFourOfAKindCnt*1.0/iTotalCnt << endl;
+	cout << "---         FullHouse: " << iFullHouseCnt << "/" << iTotalCnt << "=" << iFullHouseCnt*1.0/iTotalCnt << endl;
+	cout << "---             Flush: " << iFlushCnt << "/" << iTotalCnt << "=" << iFlushCnt*1.0/iTotalCnt << endl;
+	cout << "---          Straight: " << iStraightCnt << "/" << iTotalCnt << "=" << iStraightCnt*1.0/iTotalCnt << endl;
+	cout << "---      ThreeOfAKind: " << iThreeOfAKindCnt << "/" << iTotalCnt << "=" << iThreeOfAKindCnt*1.0/iTotalCnt << endl;
+	cout << "---          TwoPairs: " << iTwoPairsCnt << "/" << iTotalCnt << "=" << iTwoPairsCnt*1.0/iTotalCnt << endl;
+	cout << "---           OnePair: " << iOnePairCnt << "/" << iTotalCnt << "=" << iOnePairCnt*1.0/iTotalCnt << endl;
+	cout << "---          HighHand: " << iHighHandCnt << "/" << iTotalCnt << "=" << iHighHandCnt*1.0/iTotalCnt << endl;
+	
+    cout << "---###---func myPokerTestB() end---" << endl;
     system("PAUSE");
     return;
 }
 
 //测试牌型判定单个函数 
 void myPokerTestC() {
-    vector<myCard> vec;
-    myCard oCard1(5,"c");vec.push_back(oCard1);
-    myCard oCard2(3,"h");vec.push_back(oCard2);
-    myCard oCard3(7,"s");vec.push_back(oCard3);
-    myCard oCard4(1,"c");vec.push_back(oCard4);
-    myCard oCard5(10,"d");vec.push_back(oCard5);
+    cout << "---###---func myPokerTestC() end---" << endl;
+	
+	vector<myCard> vec;
+    myCard oCard1(10,"c");vec.push_back(oCard1);
+    myCard oCard2(11,"c");vec.push_back(oCard2);
+    myCard oCard3(9,"c");vec.push_back(oCard3);
+    myCard oCard4(13,"c");vec.push_back(oCard4);
+    myCard oCard5(12,"c");vec.push_back(oCard5);
 	for(unsigned int ui=0;ui<vec.size();ui++) {
 		cout << vec[ui].prtCard() << endl;
 	}
 	int iTJQKA = 0;
-    if(isStraight(vec, iTJQKA)) {
-        cout << "---Straight---" << endl;
-    }
-    if(isFlush(vec)) {
-        cout << "---Flush---" << endl;
+	if(isRoyalStraightFlush(vec)) {
+        cout << "---RoyalStraightFlush---" << endl;
     }
 	if(isStraightFlush(vec, iTJQKA)) {
         cout << "---StraightFlush---" << endl;
-    }
-	if(isRoyalStraightFlush(vec)) {
-        cout << "---RoyalStraightFlush---" << endl;
     }
 	if(isFourOfAKind(vec)) {
         cout << "---FourOfAKind---" << endl;
     }
 	if(isFullHouse(vec)) {
         cout << "---FullHouse---" << endl;
+    }
+	if(isFlush(vec)) {
+        cout << "---Flush---" << endl;
+    }
+    if(isStraight(vec, iTJQKA)) {
+        cout << "---Straight---" << endl;
     }
 	if(isThreeOfAKind(vec)) {
         cout << "---ThreeOfAKind---" << endl;
@@ -584,7 +670,7 @@ void myPokerTestC() {
         cout << "---OnePair---" << endl;
     }
     
-    cout << "---func myPokerTestC() end---" << endl;
+    cout << "---###---func myPokerTestC() end---" << endl;
     system("PAUSE");
     return;
 }
@@ -599,9 +685,9 @@ int main(int argc, char *argv[])
       
       //myPokerTestA();
       
-      //myPokerTestB();
+      myPokerTestB();
 	  
-	  myPokerTestC();
+	  //myPokerTestC();
       
     system("PAUSE");
     return EXIT_SUCCESS;
