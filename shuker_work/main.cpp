@@ -137,6 +137,12 @@ public:
           }
       }
       
+	  void assignCard(myCard oCard) {
+	      iFigure = oCard.iFigure;
+		  strSuit = oCard.strSuit;
+		  bFlag = oCard.bFlag;
+	  }
+	  
       string prtCard() {
            char szRes[4] = {0};
            
@@ -241,14 +247,14 @@ public:
           return uiNextSeed;
       }
       
-	  //uiIdx-从1起
-      void getCard(unsigned int uiIdx, bool bIdx=false) {
+	  //uiIdx 从1起
+      void prtCardByIdx(unsigned int uiIdx, bool bIdx=false) {
            if(uiIdx>vecCards.size() || uiIdx==0) {
-                cout << "---error: this is a invalid card idx---" << endl;
+                cout << "---prtCardByIdx error: this is a invalid card idx---" << endl;
                 return;
            }
            if(bIdx) {
-               cout << vecCards[uiIdx-1].prtCard() << ":[" << uiIdx << "]" << endl;
+               cout << ":[" << uiIdx << "]" << vecCards[uiIdx-1].prtCard() << endl;
            }
            else {
                cout << vecCards[uiIdx-1].prtCard() << endl;
@@ -260,6 +266,16 @@ public:
           return vecCards.size();
       }
       
+	  //uiIdx 从1起
+	  void getCardByIdx(unsigned int uiIdx, myCard &oCard) {
+          if(uiIdx>vecCards.size() || uiIdx==0) {
+              cout << "---getCardByIdx error: this is a invalid card idx---" << endl;
+              return;
+          }
+		  oCard.assignCard(vecCards[uiIdx-1]);
+		  return;
+	  }
+	  
       void get5Cards(vector<myCard> &vec) {
            vec.assign(vecCards.begin(), vecCards.begin()+5);
            return;
@@ -268,6 +284,13 @@ public:
 private:
       vector<myCard> vecCards;
 };
+
+//打印一手牌
+void prt5Card(vector<myCard> &vecCards) {
+	for(unsigned int ui=0;ui<vecCards.size();ui++) {
+		cout << vecCards[ui].prtCard() << endl;
+	}
+}
 
 /**
  *|RoyalStraightFlush|Y| | | | | | | | |
@@ -283,7 +306,7 @@ private:
 
 bool isFlush(vector<myCard> &vecCards) {
      if(vecCards.size() != 5) {
-         cout << "---error: [isFlush]a invalid cards num" << vecCards.size() << "---" << endl;
+         cout << "---error: [isFlush]a invalid cards num:" << vecCards.size() << "---" << endl;
          return false;
      }
      
@@ -300,7 +323,7 @@ bool isFlush(vector<myCard> &vecCards) {
 
 bool isStraight(vector<myCard> &vecCards, int &iTJQKA) {
      if(vecCards.size() != 5) {
-         cout << "---error: [isStraight]a invalid cards num" << vecCards.size() << "---" << endl;
+         cout << "---error: [isStraight]a invalid cards num:" << vecCards.size() << "---" << endl;
          return false;
      }
 	 
@@ -328,7 +351,7 @@ bool isStraight(vector<myCard> &vecCards, int &iTJQKA) {
 
 bool isStraightFlush(vector<myCard> &vecCards, int &iTJQKA) {
      if(vecCards.size() != 5) {
-         cout << "---error: [isStraightFlush]a invalid cards num" << vecCards.size() << "---" << endl;
+         cout << "---error: [isStraightFlush]a invalid cards num:" << vecCards.size() << "---" << endl;
          return false;
      }
      
@@ -344,7 +367,7 @@ bool isStraightFlush(vector<myCard> &vecCards, int &iTJQKA) {
 
 bool isRoyalStraightFlush(vector<myCard> &vecCards) {
      if(vecCards.size() != 5) {
-         cout << "---error: [isRoyalStraightFlush]a invalid cards num" << vecCards.size() << "---" << endl;
+         cout << "---error: [isRoyalStraightFlush]a invalid cards num:" << vecCards.size() << "---" << endl;
          return false;
      }
      
@@ -359,7 +382,7 @@ bool isRoyalStraightFlush(vector<myCard> &vecCards) {
 
 bool isFourOfAKind(vector<myCard> &vecCards) {
 	if(vecCards.size() != 5) {
-		cout << "---error: [isFourOfAKind]a invalid cards num" << vecCards.size() << "---" << endl;
+		cout << "---error: [isFourOfAKind]a invalid cards num:" << vecCards.size() << "---" << endl;
 		return false;
 	}
 	
@@ -386,7 +409,7 @@ bool isFourOfAKind(vector<myCard> &vecCards) {
 
 bool isFullHouse(vector<myCard> &vecCards) {
 	if(vecCards.size() != 5) {
-		cout << "---error: [isFullHouse]a invalid cards num" << vecCards.size() << "---" << endl;
+		cout << "---error: [isFullHouse]a invalid cards num:" << vecCards.size() << "---" << endl;
 		return false;
 	}
 	
@@ -413,7 +436,7 @@ bool isFullHouse(vector<myCard> &vecCards) {
 
 bool isThreeOfAKind(vector<myCard> &vecCards) {
 	if(vecCards.size() != 5) {
-		cout << "---error: [isThreeOfAKind]a invalid cards num" << vecCards.size() << "---" << endl;
+		cout << "---error: [isThreeOfAKind]a invalid cards num:" << vecCards.size() << "---" << endl;
 		return false;
 	}
 	
@@ -451,7 +474,7 @@ bool isThreeOfAKind(vector<myCard> &vecCards) {
 
 bool isTwoPairs(vector<myCard> &vecCards) {
 	if(vecCards.size() != 5) {
-		cout << "---error: [isTwoPairs]a invalid cards num" << vecCards.size() << "---" << endl;
+		cout << "---error: [isTwoPairs]a invalid cards num:" << vecCards.size() << "---" << endl;
 		return false;
 	}
 	
@@ -486,7 +509,7 @@ bool isTwoPairs(vector<myCard> &vecCards) {
 
 bool isOnePair(vector<myCard> &vecCards) {
 	if(vecCards.size() != 5) {
-		cout << "---error: [isOnePair]a invalid cards num" << vecCards.size() << "---" << endl;
+		cout << "---error: [isOnePair]a invalid cards num:" << vecCards.size() << "---" << endl;
 		return false;
 	}
 	
@@ -502,7 +525,6 @@ bool isOnePair(vector<myCard> &vecCards) {
 		}
     }
 	
-	it = mapFigureCnt.begin();
 	if(mapFigureCnt.size() == 4) {
 		return true;
 	}
@@ -511,8 +533,340 @@ bool isOnePair(vector<myCard> &vecCards) {
 	}
 }
 
-//按点数降序排列
-void getHighHand(vector<myCard> &vecCards) {
+/*牌型
+ *RoyalStraightFlush=10;
+ *StraightFlush      =9;
+ *FourOfAKind        =8;
+ *FullHouse          =7;
+ *Flush              =6;
+ *Straight           =5;
+ *ThreeOfAKind       =4;
+ *TwoPairs           =3;
+ *OnePair            =2;
+ *HighHand           =1;
+ *error              =0;
+ */
+class texasHands {
+public:
+	texasHands() {
+		mapHands[10] = "RoyalStraightFlush";
+		mapHands[9] = "StraightFlush";
+		mapHands[8] = "FourOfAKind";
+		mapHands[7] = "FullHouse";
+		mapHands[6] = "Flush";
+		mapHands[5] = "Straight";
+		mapHands[4] = "ThreeOfAKind";
+		mapHands[3] = "TwoPairs";
+		mapHands[2] = "OnePair";
+		mapHands[1] = "HighHand";
+		mapHands[0] = "error";
+	}
+	
+	string getTexasHands(int iCode) {
+		string res;
+		map<int, string>::iterator it = mapHands.find(iCode);
+		if(it != mapHands.end()) {
+			res = it->second;
+		}
+		else {
+			res = "notFound";
+		}
+		return res;
+	}
+
+private:
+	map<int, string> mapHands;
+};
+static texasHands oTexasHands;
+
+/*计算牌型 采用'mapHands'的定义
+ *并按可比较的点数降序排列 如3333K 22Q84
+ *A=14 K=13 Q=12 J=11
+ */
+int getHand(vector<myCard> &vecCards, vector<int> &vecFigures) {
+	if(vecCards.size() != 5) {
+		cout << "---error: [getHand]a invalid cards num:" << vecCards.size() << "---" << endl;
+		return 0;
+	}
+	
+	vecFigures.clear();
+	
+	int iHand = 0;
+	int iTJQKA = 0;
+	if(isRoyalStraightFlush(vecCards)) {
+		iHand = 10;
+		//cout << "---RoyalStraightFlush---" << endl;
+		vecFigures.push_back(14);
+		vecFigures.push_back(13);
+		vecFigures.push_back(12);
+		vecFigures.push_back(11);
+		vecFigures.push_back(10);
+	}
+	else if(isStraightFlush(vecCards, iTJQKA)) {  //iTJQKA must equal 0
+		iHand = 9;
+		//cout << "---StraightFlush---" << endl;
+		vecFigures.push_back(vecCards[0].getFigure());
+		vecFigures.push_back(vecCards[1].getFigure());
+		vecFigures.push_back(vecCards[2].getFigure());
+		vecFigures.push_back(vecCards[3].getFigure());
+		vecFigures.push_back(vecCards[4].getFigure());
+		sort(vecFigures.begin(), vecFigures.end(), greater<int>());
+	}
+	else if(isFourOfAKind(vecCards)) {
+		iHand = 8;
+		//cout << "---FourOfAKind---" << endl;
+		map<int,int> mapFigureCnt;
+		map<int,int>::iterator it;
+		for(unsigned int ui=0;ui<vecCards.size();ui++) {
+			it = mapFigureCnt.find(vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure());
+			if(it == mapFigureCnt.end()) {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] = 1;
+			}
+			else {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] += 1;
+			}
+		}
+		//mapFigureCnt一定是[4|1 OR 1|4]
+		it=mapFigureCnt.begin();
+		if(it->second == 4) {
+			vecFigures.push_back(it->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back((++it)->first);
+		}
+		else {
+			vecFigures.push_back((++it)->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back((--it)->first);
+		}
+	}
+	else if(isFullHouse(vecCards)) {
+		iHand = 7;
+		//cout << "---FullHouse---" << endl;
+		map<int,int> mapFigureCnt;
+		map<int,int>::iterator it;
+		for(unsigned int ui=0;ui<vecCards.size();ui++) {
+			it = mapFigureCnt.find(vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure());
+			if(it == mapFigureCnt.end()) {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] = 1;
+			}
+			else {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] += 1;
+			}
+		}
+		//mapFigureCnt一定是[3|2 OR 2|3]
+		it=mapFigureCnt.begin();
+		if(it->second == 3) {
+			vecFigures.push_back(it->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back((++it)->first);
+			vecFigures.push_back(it->first);
+		}
+		else {
+			vecFigures.push_back((++it)->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back(it->first);
+			vecFigures.push_back((--it)->first);
+			vecFigures.push_back(it->first);
+		}
+	}
+	else if(isFlush(vecCards)) {
+		iHand = 6;
+		//cout << "---Flush---" << endl;
+		vecFigures.push_back(vecCards[0].getFigure()==1?14:vecCards[0].getFigure());
+		vecFigures.push_back(vecCards[1].getFigure()==1?14:vecCards[1].getFigure());
+		vecFigures.push_back(vecCards[2].getFigure()==1?14:vecCards[2].getFigure());
+		vecFigures.push_back(vecCards[3].getFigure()==1?14:vecCards[3].getFigure());
+		vecFigures.push_back(vecCards[4].getFigure()==1?14:vecCards[4].getFigure());
+		sort(vecFigures.begin(), vecFigures.end(), greater<int>());
+	}
+	else if(isStraight(vecCards, iTJQKA)) {
+		iHand = 5;
+		//cout << "---Straight---" << endl;
+		if(iTJQKA) {
+			vecFigures.push_back(14);
+			vecFigures.push_back(13);
+			vecFigures.push_back(12);
+			vecFigures.push_back(11);
+			vecFigures.push_back(10);
+		}
+		else {
+			vecFigures.push_back(vecCards[0].getFigure());
+			vecFigures.push_back(vecCards[1].getFigure());
+			vecFigures.push_back(vecCards[2].getFigure());
+			vecFigures.push_back(vecCards[3].getFigure());
+			vecFigures.push_back(vecCards[4].getFigure());
+			sort(vecFigures.begin(), vecFigures.end(), greater<int>());
+		}
+	}
+	else if(isThreeOfAKind(vecCards)) {
+		iHand = 4;
+		//cout << "---ThreeOfAKind---" << endl;
+		map<int,int> mapFigureCnt;
+		map<int,int>::iterator it;
+		for(unsigned int ui=0;ui<vecCards.size();ui++) {
+			it = mapFigureCnt.find(vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure());
+			if(it == mapFigureCnt.end()) {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] = 1;
+			}
+			else {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] += 1;
+			}
+		}
+		//map的特性: 会以key的值自行排序 从小到大
+		//mapFigureCnt一定是[3|1|1 OR 1|3|1 OR 1|1|3]
+		int fig_1_s = 0;
+		int fig_1_b = 0;  //fig_1_b>fig_1_s
+		for(it=mapFigureCnt.begin();it!=mapFigureCnt.end();it++) {
+			if(it->second == 3) {
+				vecFigures.push_back(it->first);
+				vecFigures.push_back(it->first);
+				vecFigures.push_back(it->first);
+			}
+			else {
+				if(fig_1_s == 0) {
+					fig_1_s = it->first;
+				}
+				else {
+					fig_1_b = it->first;
+				}
+			}
+		}
+		vecFigures.push_back(fig_1_b);
+		vecFigures.push_back(fig_1_s);
+	}
+	else if(isTwoPairs(vecCards)) {
+		iHand = 3;
+		//cout << "---TwoPairs---" << endl;
+		map<int,int> mapFigureCnt;
+		map<int,int>::iterator it;
+		for(unsigned int ui=0;ui<vecCards.size();ui++) {
+			it = mapFigureCnt.find(vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure());
+			if(it == mapFigureCnt.end()) {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] = 1;
+			}
+			else {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] += 1;
+			}
+		}
+		//map的特性: 会以key的值自行排序 从小到大
+		//mapFigureCnt一定是[2|2|1 OR 2|1|2 OR 2|2|1]
+		int fig_1 = 0;
+		int fig_2 = 0;
+		for(it=mapFigureCnt.begin();it!=mapFigureCnt.end();it++) {
+			if(it->second == 2) {
+				if(fig_2 == 0) {
+					fig_2 = it->first;
+				}
+				else {
+					vecFigures.push_back(it->first);
+					vecFigures.push_back(it->first);
+				}
+			}
+			else {
+				fig_1 = it->first;
+			}
+		}
+		vecFigures.push_back(fig_2);
+		vecFigures.push_back(fig_2);
+		vecFigures.push_back(fig_1);
+	}
+	else if(isOnePair(vecCards)) {
+		iHand = 2;
+		//cout << "---OnePair---" << endl;
+		map<int,int> mapFigureCnt;
+		map<int,int>::iterator it;
+		for(unsigned int ui=0;ui<vecCards.size();ui++) {
+			it = mapFigureCnt.find(vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure());
+			if(it == mapFigureCnt.end()) {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] = 1;
+			}
+			else {
+				mapFigureCnt[vecCards[ui].getFigure()==1?14:vecCards[ui].getFigure()] += 1;
+			}
+		}
+		//map的特性: 会以key的值自行排序 从小到大
+		//mapFigureCnt一定是[2|1|1|1 OR 1|2|1|1 OR 1|1|2|1 OR 1|1|1|2]
+		int fig_1_s = 0;
+		int fig_1_m = 0;
+		int fig_1_b = 0;  //fig_1_b > fig_1_m > fig_1_s
+		for(it=mapFigureCnt.begin();it!=mapFigureCnt.end();it++) {
+			if(it->second == 2) {
+				vecFigures.push_back(it->first);
+				vecFigures.push_back(it->first);
+			}
+			else {
+				if(fig_1_s == 0) {
+					fig_1_s = it->first;
+				}
+				else if(fig_1_m == 0) {
+					fig_1_m = it->first;
+				}
+				else {
+					fig_1_b = it->first;
+				}
+			}
+		}
+		vecFigures.push_back(fig_1_b);
+		vecFigures.push_back(fig_1_m);
+		vecFigures.push_back(fig_1_s);
+	}
+	else {
+		iHand = 1;
+		//cout << "---HighHand---" << endl;
+		vecFigures.push_back(vecCards[0].getFigure()==1?14:vecCards[0].getFigure());
+		vecFigures.push_back(vecCards[1].getFigure()==1?14:vecCards[1].getFigure());
+		vecFigures.push_back(vecCards[2].getFigure()==1?14:vecCards[2].getFigure());
+		vecFigures.push_back(vecCards[3].getFigure()==1?14:vecCards[3].getFigure());
+		vecFigures.push_back(vecCards[4].getFigure()==1?14:vecCards[4].getFigure());
+		sort(vecFigures.begin(), vecFigures.end(), greater<int>());
+	}
+	
+	return iHand;
+}
+
+//比较牌型大小 -1:error 0:A=B 1:A<B 2:A>B
+int compareHands(vector<myCard> &vecCards_A, vector<myCard> &vecCards_B) {
+	if(vecCards_A.size()!=5 || vecCards_B.size()!=5) {
+		cout << "---error: [compareHands]a invalid cards num:" << vecCards_A.size() << "|" << vecCards_B.size() << "---" << endl;
+		return -1;
+	}
+	
+	int iHand_A = 0;
+	int iHand_B = 0;
+	vector<int> vecFigures_A;
+	vector<int> vecFigures_B;
+	iHand_A = getHand(vecCards_A, vecFigures_A);
+	iHand_B = getHand(vecCards_B, vecFigures_B);
+	if(iHand_A==0 || iHand_B==0 || vecFigures_A.size()!=5 || vecFigures_B.size()!=5) {
+		cout << "---error: [compareHands]a invalid getHand ret:" << iHand_A << "|" << iHand_B << "; vecF_sz:" << vecFigures_A.size() << vecFigures_B.size() << "---" << endl;
+		return -1;
+	}
+	
+	if(iHand_A > iHand_B) {
+		return 2;
+	}
+	else if(iHand_A < iHand_B) {
+		return 1;
+	}
+	else {
+		for(int i=0;i<5;i++) {
+			if(vecFigures_A[i] > vecFigures_B[i]) {
+				return 2;
+			}
+			else if(vecFigures_A[i] < vecFigures_B[i]) {
+				return 1;
+			}
+			else {
+				continue;
+			}
+		}
+		return 0;
+	}
 }
 
 //模拟发牌 
@@ -523,23 +877,70 @@ void myPokerTestA() {
     oPoker.shuffle(time(NULL));
     unsigned int i=0;
     cout << "---starting hand---" << endl;
-    i++;oPoker.getCard(i);i++;oPoker.getCard(i);
+    i++;oPoker.prtCardByIdx(i);i++;oPoker.prtCardByIdx(i);
     cout << "---flop---" << endl;
     i++;  //cut
-	i++;oPoker.getCard(i);i++;oPoker.getCard(i);i++;oPoker.getCard(i);
+	i++;oPoker.prtCardByIdx(i);i++;oPoker.prtCardByIdx(i);i++;oPoker.prtCardByIdx(i);
     cout << "---turn---" << endl;
     i++;  //cut
-	i++;oPoker.getCard(i);
+	i++;oPoker.prtCardByIdx(i);
     cout << "---river---" << endl;
     i++;  //cut
-	i++;oPoker.getCard(i);
+	i++;oPoker.prtCardByIdx(i);
 	
     cout << "---###---func myPokerTestA() end---" << endl;
     system("PAUSE");
     return;
 }
 
+//测试牌型判定单个函数 
 void myPokerTestB() {
+    cout << "---###---func myPokerTestC() end---" << endl;
+	
+	vector<myCard> vec;
+    myCard oCard1(10,"c");vec.push_back(oCard1);
+    myCard oCard2(11,"c");vec.push_back(oCard2);
+    myCard oCard3(9,"c");vec.push_back(oCard3);
+    myCard oCard4(13,"c");vec.push_back(oCard4);
+    myCard oCard5(12,"c");vec.push_back(oCard5);
+	prt5Card(vec);
+	
+	int iTJQKA = 0;
+	if(isRoyalStraightFlush(vec)) {
+        cout << "---RoyalStraightFlush---" << endl;
+    }
+	if(isStraightFlush(vec, iTJQKA)) {
+        cout << "---StraightFlush---" << endl;
+    }
+	if(isFourOfAKind(vec)) {
+        cout << "---FourOfAKind---" << endl;
+    }
+	if(isFullHouse(vec)) {
+        cout << "---FullHouse---" << endl;
+    }
+	if(isFlush(vec)) {
+        cout << "---Flush---" << endl;
+    }
+    if(isStraight(vec, iTJQKA)) {
+        cout << "---Straight---" << endl;
+    }
+	if(isThreeOfAKind(vec)) {
+        cout << "---ThreeOfAKind---" << endl;
+    }
+	if(isTwoPairs(vec)) {
+        cout << "---TwoPairs---" << endl;
+    }
+	if(isOnePair(vec)) {
+        cout << "---OnePair---" << endl;
+    }
+    
+    cout << "---###---func myPokerTestC() end---" << endl;
+    system("PAUSE");
+    return;
+}
+
+//统计各个牌型出现的次数
+void myPokerTestC() {
     cout << "---###---func myPokerTestB() start---" << endl;
 	
 	myPoker oPoker(52);
@@ -555,23 +956,23 @@ void myPokerTestB() {
 	int iOnePairCnt = 0;
 	int iHighHandCnt = 0;
 	int iX = 10000;
-	int iY = 100;  //应该 大大小于MAX_RAND 同一轮内不能一直使用shuffle函数返回的rand序列作为种子
+	int iY = 100;  //应该 大大小于'MAX_RAND' 同一轮内(同一iX下循环iY次)不能一直使用shuffle函数返回的rand序列作为种子
 	
 	unsigned int uiSeed = time(NULL);
 	for(int i=0;i<iX;i++) {
-		Sleep(100);  //ms
+		Sleep(100);  //ms  每一轮sleep一下 防止cpu过高
 		if(i%15 == 0) {  //每15*100ms 换种子 不再采用shuffle函数返回的rand序列
 			uiSeed = time(NULL);
 		}
-		for(int j=1;j<=iY;j++) {  //每一轮sleep一下 防止cpu过高
-			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子(shuffle函数返回的rand序列) 如果是固定种子则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
+		for(int j=1;j<=iY;j++) {
+			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子(shuffle函数返回的rand序列) 如果是固定种子(同一time(NULL)下循环)则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
 			oPoker.get5Cards(vec);
 			int iTJQKA = 0;
 			if(isRoyalStraightFlush(vec)) {
 				iRoyalStraightFlushCnt++;
 				//cout << "---RoyalStraightFlush---" << endl;
 			}
-			else if(isStraightFlush(vec, iTJQKA)) {
+			else if(isStraightFlush(vec, iTJQKA)) {  //iTJQKA must equal 0
 				iStraightFlushCnt++;
 				//cout << "---StraightFlush---" << endl;
 			}
@@ -628,49 +1029,59 @@ void myPokerTestB() {
     return;
 }
 
-//测试牌型判定单个函数 
-void myPokerTestC() {
-    cout << "---###---func myPokerTestC() end---" << endl;
+//测试牌型计算函数
+void myPokerTestD() {
+    cout << "---###---func myPokerTestD() end---" << endl;
 	
-	vector<myCard> vec;
-    myCard oCard1(10,"c");vec.push_back(oCard1);
-    myCard oCard2(11,"c");vec.push_back(oCard2);
-    myCard oCard3(9,"c");vec.push_back(oCard3);
-    myCard oCard4(13,"c");vec.push_back(oCard4);
-    myCard oCard5(12,"c");vec.push_back(oCard5);
-	for(unsigned int ui=0;ui<vec.size();ui++) {
-		cout << vec[ui].prtCard() << endl;
+	//-------指定牌型-------
+	/* vector<myCard> vecC;
+    myCard oCard1(5,"c");vecC.push_back(oCard1);
+    myCard oCard2(2,"c");vecC.push_back(oCard2);
+    myCard oCard3(7,"c");vecC.push_back(oCard3);
+    myCard oCard4(2,"s");vecC.push_back(oCard4);
+    myCard oCard5(5,"h");vecC.push_back(oCard5);
+	prt5Card(vecC);
+	vector<int> vecF;
+	int ret = getHand(vecC, vecF);
+	cout << oTexasHands.getTexasHands(ret) << "=" << vecF[0] << "|" << vecF[1] << "|" << vecF[2] << "|" << vecF[3] << "|" << vecF[4] << endl; */
+	//-------指定牌型-------
+	
+	//-------随机牌型-------
+	myPoker oPoker(52);
+	vector<myCard> vecC_r;
+	vector<int> vecF_r;
+	int ret_r = 0;
+	int iX = 1;
+	int iY = 3;  //应该 大大小于'MAX_RAND' 同一轮内(同一iX下循环iY次)不能一直使用shuffle函数返回的rand序列作为种子
+	
+	unsigned int uiSeed = time(NULL);
+	for(int i=0;i<iX;i++) {
+		Sleep(100);  //ms  每一轮sleep一下 防止cpu过高
+		if(i%15 == 0) {  //每15*100ms 换种子 不再采用shuffle函数返回的rand序列
+			uiSeed = time(NULL);
+		}
+		for(int j=1;j<=iY;j++) {
+			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子(shuffle函数返回的rand序列) 如果是固定种子(同一time(NULL)下循环)则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
+			oPoker.get5Cards(vecC_r);
+			prt5Card(vecC_r);
+			ret_r = getHand(vecC_r, vecF_r);
+			cout << oTexasHands.getTexasHands(ret_r) << "=" << vecF_r[0] << "|" << vecF_r[1] << "|" << vecF_r[2] << "|" << vecF_r[3] << "|" << vecF_r[4] << endl;
+		}
 	}
-	int iTJQKA = 0;
-	if(isRoyalStraightFlush(vec)) {
-        cout << "---RoyalStraightFlush---" << endl;
-    }
-	if(isStraightFlush(vec, iTJQKA)) {
-        cout << "---StraightFlush---" << endl;
-    }
-	if(isFourOfAKind(vec)) {
-        cout << "---FourOfAKind---" << endl;
-    }
-	if(isFullHouse(vec)) {
-        cout << "---FullHouse---" << endl;
-    }
-	if(isFlush(vec)) {
-        cout << "---Flush---" << endl;
-    }
-    if(isStraight(vec, iTJQKA)) {
-        cout << "---Straight---" << endl;
-    }
-	if(isThreeOfAKind(vec)) {
-        cout << "---ThreeOfAKind---" << endl;
-    }
-	if(isTwoPairs(vec)) {
-        cout << "---TwoPairs---" << endl;
-    }
-	if(isOnePair(vec)) {
-        cout << "---OnePair---" << endl;
-    }
+	//-------随机牌型-------
     
-    cout << "---###---func myPokerTestC() end---" << endl;
+    cout << "---###---func myPokerTestD() end---" << endl;
+    system("PAUSE");
+    return;
+}
+
+//测试牌型比较函数
+void myPokerTestE() {
+    cout << "---###---func myPokerTestE() end---" << endl;
+	
+	
+    
+    cout << "---###---func myPokerTestE() end---" << endl;
     system("PAUSE");
     return;
 }
@@ -684,10 +1095,10 @@ int main(int argc, char *argv[])
       //puzzleA();
       
       //myPokerTestA();
-      
-      myPokerTestB();
-	  
+      //myPokerTestB();
 	  //myPokerTestC();
+	  myPokerTestD();
+	  //myPokerTestE();
       
     system("PAUSE");
     return EXIT_SUCCESS;
