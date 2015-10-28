@@ -176,8 +176,8 @@ unsigned int C_n_m(vector< vector<unsigned int> > &vecRes, unsigned int n, unsig
 void CnA() {
 	int ret = 0;
 	vector< vector<unsigned int> > vecRet;
-	int n = 7;
-	int m = 5;
+	unsigned int n = 7;
+	unsigned int m = 5;
 	bool bCout = true;
 	ret = C_n_m(vecRet,n,m,bCout);
 	cout << "C(" << n << "," << m << ")=" << ret << endl;
@@ -973,8 +973,23 @@ void compareXHands(vector< vector<myCard> > &vecCardsArr, int &iWinIdx, int &iWi
 	}
 }
 
-//7张牌计算
-int getHandIn7(vector<myCard> &vecCards, vector<myCard> &vecWinCards) {
+//X张牌计算 X设为7
+int getHandInX(vector<myCard> &vecCards, vector<myCard> &vecWinCards) {
+	unsigned int uiSz = vecCards.size();
+	if(uiSz < 5) {
+		cout << "---error: [getHandInX]a invalid cards num:" << uiSz << "---" << endl;
+		return -1;
+	}
+	
+	if(uiSz != 7) {
+		cout << "---warn: [getHandInX]an unnormal cards num:" << uiSz << "---" << endl;
+	}
+	
+	vector< vector<unsigned int> > vecRet;
+	unsigned int n = uiSz;
+	unsigned int m = 5;
+	C_n_m(vecRet,n,m);
+	
 }
 
 //模拟发牌 
