@@ -191,7 +191,13 @@ void CnA() {
  */
 class myCard {
 public:
-      //a-点数 b-花色 14-留给A 15-black j 16-red j
+      myCard() {
+          iFigure = 0;
+          strSuit = "z";
+          bFlag = false;
+      }
+	  
+	  //a-点数 b-花色 14-留给A 15-black j 16-red j
 	  myCard(int a, string b) {
           if((a>=1 && a<=13 && (b=="s"||b=="h"||b=="c"||b=="d")) || (a>=15 && a<=16 && b=="j")) {
               iFigure = a;
@@ -652,7 +658,7 @@ static texasHands oTexasHands;
  *并按可比较的点数降序排列 如3333K 22Q84
  *A=14 K=13 Q=12 J=11
  */
-//5张牌计算
+//5张牌计算 返回牌型code
 int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 	if(vecCards.size() != 5) {
 		cout << "---error: [getHand]a invalid cards num:" << vecCards.size() << "---" << endl;
@@ -899,7 +905,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 	return iHand;
 }
 
-//比较牌型大小 -1:error 0:A=B 1:A<B 2:A>B
+//比较2个牌型大小 -1:error 0:A=B 1:A<B 2:A>B
 int compare2Hands(vector<myCard> &vecCards_A, vector<myCard> &vecCards_B, int &iWinHand) {
 	if(vecCards_A.size()!=5 || vecCards_B.size()!=5) {
 		cout << "---error: [compare2Hands]a invalid cards num:" << vecCards_A.size() << "|" << vecCards_B.size() << "---" << endl;
@@ -941,14 +947,14 @@ int compare2Hands(vector<myCard> &vecCards_A, vector<myCard> &vecCards_B, int &i
 		return 0;
 	}
 }
-//比较牌型大小
-void compareXHands(vector< vector<myCard> > &vecCardsArr, int &iWinIdx, int &iWinHand) {
+//比较X个牌型大小
+void compareXHands(vector< vector<myCard> > &vecCardsArr, unsigned int &uiWinIdx, int &iWinHand) {
 	if(vecCardsArr.empty()) {
 		cout << "---error: [compareXHands]a invalid cardsArr : empty---" << endl;
 		return;
 	}
 	
-	iWinIdx = 0;
+	uiWinIdx = 0;
 	iWinHand = 0;
 	vector<myCard> vecWinCards;
 	vecWinCards.assign(vecCardsArr[0].begin(), vecCardsArr[0].end());
@@ -960,7 +966,7 @@ void compareXHands(vector< vector<myCard> > &vecCardsArr, int &iWinIdx, int &iWi
 		
 		int ret = compare2Hands(vecWinCards, vecCardsArr[ui], iWinHand);
 		if(ret == 1) {
-			iWinIdx = ui;
+			uiWinIdx = ui;
 			vecWinCards.assign(vecCardsArr[ui].begin(), vecCardsArr[ui].end());
 		}
 		else if(ret==0 || ret==2) {
@@ -973,26 +979,46 @@ void compareXHands(vector< vector<myCard> > &vecCardsArr, int &iWinIdx, int &iWi
 	}
 }
 
-//X张牌计算 X设为7
+//X张牌计算 X设为7 返回牌型code
 int getHandInX(vector<myCard> &vecCards, vector<myCard> &vecWinCards) {
 	unsigned int uiSz = vecCards.size();
 	if(uiSz < 5) {
 		cout << "---error: [getHandInX]a invalid cards num:" << uiSz << "---" << endl;
-		return -1;
+		return 0;
 	}
 	
 	if(uiSz != 7) {
 		cout << "---warn: [getHandInX]an unnormal cards num:" << uiSz << "---" << endl;
 	}
 	
-	vector< vector<unsigned int> > vecRet;
+	vector< vector<unsigned int> > vecRes;
 	unsigned int n = uiSz;
 	unsigned int m = 5;
-	C_n_m(vecRet,n,m);
+	C_n_m(vecRes,n,m);
 	
+	vector< vector<myCard> > vecCardsArr;
+	for(unsigned int ui=0;ui!=vecRes.size();ui++) {
+		vector<myCard> vecTmp;
+		for(unsigned int uj=0;uj!=vecRes[ui].size();uj++) {
+			vecTmp.push_back(vecCards[vecRes[ui][uj]]);
+		}
+		vecCardsArr.push_back(vecTmp);
+	}
+	unsigned int uiWinIdx = 0;
+	int iWinHand = 0;
+	compareXHands(vecCardsArr, uiWinIdx, iWinHand);
+	
+	if(uiWinIdx+1 > vecCardsArr.size()) {
+		vecWinCards.assign(vecCardsArr[uiWinIdx].begin(), vecCardsArr[uiWinIdx].end());
+		return iWinHand;
+	}
+	else {
+		cout << "---error: [getHandInX]a invalid uiWinIdx:" << uiWinIdx << ",CardsArrSz:" << vecCardsArr.size() << "---" << endl;
+		return 0;
+	}
 }
 
-//模拟发牌 
+//模拟发5张牌 
 void myPokerTestA() {
     cout << "---###---func myPokerTestA() start---" << endl;
 	
@@ -1152,7 +1178,7 @@ void myPokerTestC() {
     return;
 }
 
-//测试牌型计算函数&牌型比较函数
+//测试牌型计算函数&2个牌型比较函数
 void myPokerTestD() {
     cout << "---###---func myPokerTestD() end---" << endl;
 	
@@ -1233,6 +1259,79 @@ void myPokerTestD() {
     return;
 }
 
+//模拟一轮完整比赛
+void myPokerTestE() {
+	cout << "---###---func myPokerTestE() start---" << endl;
+	
+	myPoker oPoker(52);
+    oPoker.shuffle(time(NULL));
+	
+	unsigned int uiPlayerCnt = 2;  // 2<= uiPlayerCnt <=10
+	vector< vector<myCard> > vecPlayerCards;
+	vecPlayerCards.resize(uiPlayerCnt);
+	
+	myCard oTmpCard;
+	//Holecards
+	for(unsigned int ui=0;ui<2;ui++) {
+		for(unsigned int uj=0;uj<uiPlayerCnt;uj++) {
+			oPoker.getCardByIdx(ui*uiPlayerCnt+uj+1, oTmpCard);
+			vecPlayerCards[uj].push_back(oTmpCard);
+		}
+	}
+	//Communitycards
+	vector<myCard> vecCCards;
+	//cut;flop
+	oPoker.getCardByIdx(2*uiPlayerCnt+2, oTmpCard);vecCCards.push_back(oTmpCard);
+	oPoker.getCardByIdx(2*uiPlayerCnt+3, oTmpCard);vecCCards.push_back(oTmpCard);
+	oPoker.getCardByIdx(2*uiPlayerCnt+4, oTmpCard);vecCCards.push_back(oTmpCard);
+	//cut;turn
+	oPoker.getCardByIdx(2*uiPlayerCnt+6, oTmpCard);vecCCards.push_back(oTmpCard);
+	//cut;river
+	oPoker.getCardByIdx(2*uiPlayerCnt+8, oTmpCard);vecCCards.push_back(oTmpCard);
+	
+	int iWinHand = 0;
+	vector<myCard> vecWinCards;
+	unsigned int uiWinPlayerIdx = 0;  //由1开始
+	int iTmpHand = 0;
+	vector<myCard> vecTmpCards;
+	for(unsigned int uk=1;uk<=uiPlayerCnt;uk++) {
+		vecPlayerCards[uk-1].insert(vecPlayerCards[uk-1].end(), vecCCards.begin(), vecCCards.end());
+		iTmpHand = getHandInX(vecPlayerCards[uk-1], vecTmpCards);
+		if(iTmpHand == 0) {
+			cout << "===error===" << endl;
+			return;
+		}
+		if(iTmpHand > iWinHand) {
+			iWinHand = iTmpHand;
+			vecWinCards.assign(vecTmpCards.begin(), vecTmpCards.end());
+			uiWinPlayerIdx = uk;
+		}
+		else if(iTmpHand == iWinHand) {
+			int ret = compare2Hands(vecWinCards, vecTmpCards, iWinHand);
+			if(ret == 1) {
+				vecWinCards.assign(vecTmpCards.begin(), vecTmpCards.end());
+				uiWinPlayerIdx = uk;
+			}
+			else if(ret==0 || ret==2) {
+				continue;
+			}
+			else {
+				cout << "===error===" << endl;
+				return;
+			}
+		}
+		else {
+			continue;
+		}
+	}
+	
+	cout << "winner is player:" << uiWinPlayerIdx << endl;
+	
+    cout << "---###---func myPokerTestE() end---" << endl;
+    system("PAUSE");
+    return;
+}
+
 int main(int argc, char *argv[])
 {
       //testMysqlEscape();
@@ -1241,12 +1340,13 @@ int main(int argc, char *argv[])
       
       //puzzleA();
 	  
-	  CnA();
+	  //CnA();
       
       //myPokerTestA();
       //myPokerTestB();
 	  //myPokerTestC();
 	  //myPokerTestD();
+	  myPokerTestE();
       
     system("PAUSE");
     return EXIT_SUCCESS;
