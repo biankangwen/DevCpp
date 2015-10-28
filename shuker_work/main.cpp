@@ -115,6 +115,75 @@ void puzzleA() {
 }
 
 /*
+ * 排列组合
+ * Arrangement & Combination
+ * A(n,m) = n!/(n-m)!
+ * C(n,m) = A(n,m)/m! = n!/(n-m)!/m!;
+ */
+//提供给'C_n_m'调用 不单独调用
+void C_n_m_private(vector< vector<unsigned int> > &vecRes, vector<unsigned int> &vecTmpRes, unsigned int n, unsigned int m, int unsigned uiBegin, bool bCout) {
+	if(vecTmpRes.size() < m) {
+         cout << "---error: [C_n_m_private]a invalid param vecTmpRes.size:" << vecTmpRes.size() << "<m:" << m << "---" << endl;
+         return;
+     }
+	
+	if(n<m || m==0) {
+         cout << "---error: [C_n_m_private]a invalid param n:" << n << ";m:" << m << "---" << endl;
+         return;
+     }
+	 //n>=m && n!=0 && m!=0
+	 else if(m == n) {
+		for(unsigned int ui=0;ui<m;ui++) {
+			vecTmpRes[vecTmpRes.size()-m+ui] = uiBegin+ui;
+		}
+		vecRes.push_back(vecTmpRes);
+		if(bCout) {
+			for(unsigned int uiSz=0;uiSz<vecTmpRes.size();uiSz++) {
+				cout << vecTmpRes[uiSz] << ";";
+			}
+			cout << endl;
+		}
+	 }
+	 //n>m
+	 else if(m == 1) {
+		for(unsigned int ui=0;ui<n;ui++) {
+			vecTmpRes[vecTmpRes.size()-1] = uiBegin+ui;
+			vecRes.push_back(vecTmpRes);
+			if(bCout) {
+				for(unsigned int uiSz=0;uiSz<vecTmpRes.size();uiSz++) {
+					cout << vecTmpRes[uiSz] << ";";
+				}
+				cout << endl;
+			}
+		}
+	 }
+	 else {
+		 for(unsigned int ui=uiBegin;ui<=uiBegin+n-m;ui++) {
+			vecTmpRes[vecTmpRes.size()-m] = ui;
+			C_n_m_private(vecRes, vecTmpRes, n-ui+uiBegin-1, m-1, ui+1, bCout);
+		 }
+	 }
+}
+//n>=m,无序从n中选出m,iS表示起始数;如 n=5,m=3,uiBegin=2表示从2,3,4,5,6中选3个数
+unsigned int C_n_m(vector< vector<unsigned int> > &vecRes, unsigned int n, unsigned int m, bool bCout=false, int unsigned uiBegin=0) {
+	vecRes.clear();       //vecRes must be cleared, then call func-C_n_m_private
+	vector<unsigned int> vecTmpRes;
+	vecTmpRes.resize(m);  //vecTmpRes's size must = m, then call func-C_n_m_private
+	C_n_m_private(vecRes, vecTmpRes, n, m, uiBegin, bCout);
+	return vecRes.size();
+}
+
+void CnA() {
+	int ret = 0;
+	vector< vector<unsigned int> > vecRet;
+	int n = 7;
+	int m = 5;
+	bool bCout = true;
+	ret = C_n_m(vecRet,n,m,bCout);
+	cout << "C(" << n << "," << m << ")=" << ret << endl;
+}
+
+/*
  *Texas Hold'em Poker
  *皇家同花顺-Royal straight flush；同花顺-Straight flush；四条（金刚）-Four of a kind；葫芦-Full house(Boat)；
  *同花-Flush；顺子-Straight；三条-Three of a kind；两对-Two pairs；一对-One pair；高牌 -High hand
@@ -583,6 +652,7 @@ static texasHands oTexasHands;
  *并按可比较的点数降序排列 如3333K 22Q84
  *A=14 K=13 Q=12 J=11
  */
+//5张牌计算
 int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 	if(vecCards.size() != 5) {
 		cout << "---error: [getHand]a invalid cards num:" << vecCards.size() << "---" << endl;
@@ -830,9 +900,9 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 }
 
 //比较牌型大小 -1:error 0:A=B 1:A<B 2:A>B
-int compareHands(vector<myCard> &vecCards_A, vector<myCard> &vecCards_B) {
+int compare2Hands(vector<myCard> &vecCards_A, vector<myCard> &vecCards_B, int &iWinHand) {
 	if(vecCards_A.size()!=5 || vecCards_B.size()!=5) {
-		cout << "---error: [compareHands]a invalid cards num:" << vecCards_A.size() << "|" << vecCards_B.size() << "---" << endl;
+		cout << "---error: [compare2Hands]a invalid cards num:" << vecCards_A.size() << "|" << vecCards_B.size() << "---" << endl;
 		return -1;
 	}
 	
@@ -843,14 +913,16 @@ int compareHands(vector<myCard> &vecCards_A, vector<myCard> &vecCards_B) {
 	iHand_A = getHand(vecCards_A, vecSortedFigures_A);
 	iHand_B = getHand(vecCards_B, vecSortedFigures_B);
 	if(iHand_A==0 || iHand_B==0 || vecSortedFigures_A.size()!=5 || vecSortedFigures_B.size()!=5) {
-		cout << "---error: [compareHands]a invalid getHand ret:" << iHand_A << "|" << iHand_B << "; vecF_sz:" << vecSortedFigures_A.size() << vecSortedFigures_B.size() << "---" << endl;
+		cout << "---error: [compare2Hands]a invalid getHand ret:" << iHand_A << "|" << iHand_B << "; vecF_sz:" << vecSortedFigures_A.size() << vecSortedFigures_B.size() << "---" << endl;
 		return -1;
 	}
 	
+	iWinHand = iHand_A;
 	if(iHand_A > iHand_B) {
 		return 2;
 	}
 	else if(iHand_A < iHand_B) {
+		iWinHand = iHand_B;
 		return 1;
 	}
 	else {
@@ -859,6 +931,7 @@ int compareHands(vector<myCard> &vecCards_A, vector<myCard> &vecCards_B) {
 				return 2;
 			}
 			else if(vecSortedFigures_A[i] < vecSortedFigures_B[i]) {
+				iWinHand = iHand_B;
 				return 1;
 			}
 			else {
@@ -867,6 +940,41 @@ int compareHands(vector<myCard> &vecCards_A, vector<myCard> &vecCards_B) {
 		}
 		return 0;
 	}
+}
+//比较牌型大小
+void compareXHands(vector< vector<myCard> > &vecCardsArr, int &iWinIdx, int &iWinHand) {
+	if(vecCardsArr.empty()) {
+		cout << "---error: [compareXHands]a invalid cardsArr : empty---" << endl;
+		return;
+	}
+	
+	iWinIdx = 0;
+	iWinHand = 0;
+	vector<myCard> vecWinCards;
+	vecWinCards.assign(vecCardsArr[0].begin(), vecCardsArr[0].end());
+	for(unsigned int ui=0;ui!=vecCardsArr.size();ui++) {
+		if(vecCardsArr[ui].size() != 5) {
+			cout << "---error: [compareXHands]a invalid cardsArr[" << ui << "] num:" << vecCardsArr[ui].size() << "---" << endl;
+			return;
+		}
+		
+		int ret = compare2Hands(vecWinCards, vecCardsArr[ui], iWinHand);
+		if(ret == 1) {
+			iWinIdx = ui;
+			vecWinCards.assign(vecCardsArr[ui].begin(), vecCardsArr[ui].end());
+		}
+		else if(ret==0 || ret==2) {
+			continue;
+		}
+		else {
+			cout << "---error: [compareXHands] call compare2Hands error:" << ret << "---" << endl;
+			return;
+		}
+	}
+}
+
+//7张牌计算
+int getHandIn7(vector<myCard> &vecCards, vector<myCard> &vecWinCards) {
 }
 
 //模拟发牌 
@@ -1034,7 +1142,9 @@ void myPokerTestD() {
     cout << "---###---func myPokerTestD() end---" << endl;
 	
 	//-------指定牌型-------
-	/* int ret = 0;
+	/*
+	int ret = 0;
+	int iWinH = 0;
 	vector<myCard> vecC_A;
     myCard oCard1_A(5,"c");vecC_A.push_back(oCard1_A);
     myCard oCard2_A(2,"c");vecC_A.push_back(oCard2_A);
@@ -1056,11 +1166,12 @@ void myPokerTestD() {
 	ret = getHand(vecC_B, vecF_B);
 	cout << oTexasHands.getTexasHands(ret) << "=" << vecF_B[0] << "|" << vecF_B[1] << "|" << vecF_B[2] << "|" << vecF_B[3] << "|" << vecF_B[4] << endl;
 	
-	ret = compareHands(vecC_A, vecC_B);
+	ret = compare2Hands(vecC_A, vecC_B, iWinH);
 	if(ret == 1) {cout << "===[A<B]===" << endl;}
 	else if(ret == 2) {cout << "===[A>B]===" << endl;}
 	else if(ret == 0) {cout << "===[A=B]===" << endl;}
-	else {cout << "===error===" << endl;} */
+	else {cout << "===error===" << endl;}
+	*/
 	//-------指定牌型-------
 	
 	//-------随机牌型-------
@@ -1070,6 +1181,7 @@ void myPokerTestD() {
 	vector<myCard> vecC_r_B;
 	vector<int> vecF_r_B;
 	int ret_r = 0;
+	int iWinH_r = 0;
 	int iX = 1;
 	int iY = 5;  //应该 大大小于'MAX_RAND' 同一轮内(同一iX下循环iY次)不能一直使用shuffle函数返回的rand序列作为种子
 	
@@ -1092,7 +1204,7 @@ void myPokerTestD() {
 			ret_r = getHand(vecC_r_B, vecF_r_B);
 			cout << oTexasHands.getTexasHands(ret_r) << "=" << vecF_r_B[0] << "|" << vecF_r_B[1] << "|" << vecF_r_B[2] << "|" << vecF_r_B[3] << "|" << vecF_r_B[4] << endl;
 			
-			ret_r = compareHands(vecC_r_A, vecC_r_B);
+			ret_r = compare2Hands(vecC_r_A, vecC_r_B, iWinH_r);
 			if(ret_r == 1) {cout << "===[A<B]===" << endl;}
 			else if(ret_r == 2) {cout << "===[A>B]===" << endl;}
 			else if(ret_r == 0) {cout << "===[A=B]===" << endl;}
@@ -1113,11 +1225,13 @@ int main(int argc, char *argv[])
 	  //myTime();
       
       //puzzleA();
+	  
+	  CnA();
       
       //myPokerTestA();
       //myPokerTestB();
 	  //myPokerTestC();
-	  myPokerTestD();
+	  //myPokerTestD();
       
     system("PAUSE");
     return EXIT_SUCCESS;
