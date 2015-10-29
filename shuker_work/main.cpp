@@ -654,11 +654,10 @@ private:
 };
 static texasHands oTexasHands;
 
-/*计算牌型 采用'mapHands'的定义
+/*5张牌计算牌型 采用'mapHands'的定义返回牌型code
  *并按可比较的点数降序排列 如3333K 22Q84
  *A=14 K=13 Q=12 J=11
  */
-//5张牌计算 返回牌型code
 int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 	if(vecCards.size() != 5) {
 		cout << "---error: [getHand]a invalid cards num:" << vecCards.size() << "---" << endl;
@@ -979,7 +978,9 @@ void compareXHands(vector< vector<myCard> > &vecCardsArr, unsigned int &uiWinIdx
 	}
 }
 
-//X张牌计算 X设为7 返回牌型code
+/*X张牌计算牌型 采用'mapHands'的定义返回牌型code
+ *'vecWinCards'为最高牌型
+ */
 int getHandInX(vector<myCard> &vecCards, vector<myCard> &vecWinCards) {
 	unsigned int uiSz = vecCards.size();
 	if(uiSz < 5) {
@@ -1211,7 +1212,7 @@ void myPokerTestD() {
 	if(ret == 1) {cout << "===[A<B]===" << endl;}
 	else if(ret == 2) {cout << "===[A>B]===" << endl;}
 	else if(ret == 0) {cout << "===[A=B]===" << endl;}
-	else {cout << "===error===" << endl;}
+	else {cout << "===myPokerTestD error-A===" << endl;}
 	*/
 	//-------指定牌型-------
 	
@@ -1249,7 +1250,7 @@ void myPokerTestD() {
 			if(ret_r == 1) {cout << "===[A<B]===" << endl;}
 			else if(ret_r == 2) {cout << "===[A>B]===" << endl;}
 			else if(ret_r == 0) {cout << "===[A=B]===" << endl;}
-			else {cout << "===error===" << endl;}
+			else {cout << "===myPokerTestD error-B===" << endl;}
 		}
 	}
 	//-------随机牌型-------
@@ -1282,7 +1283,6 @@ void myPokerTestE() {
 			}
 		}
 	}
-	
 	//Communitycards
 	vector<myCard> vecCCards;
 	//cut;flop
@@ -1307,7 +1307,7 @@ void myPokerTestE() {
 		cout << "---player " << uk << ":" << oTexasHands.getTexasHands(iTmpHand) << endl;
 		prtCards(vecTmpCards);
 		if(iTmpHand == 0) {
-			cout << "===error===" << endl;
+			cout << "===myPokerTestE error-A===" << endl;
 			return;
 		}
 		if(iTmpHand > iWinHand) {
@@ -1330,7 +1330,7 @@ void myPokerTestE() {
 				vecWinPlayerIdx.push_back(uk);
 			}
 			else {
-				cout << "===error===" << endl;
+				cout << "===myPokerTestE error-B===" << endl;
 				return;
 			}
 		}
