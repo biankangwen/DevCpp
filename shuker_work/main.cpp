@@ -1008,7 +1008,7 @@ int getHandInX(vector<myCard> &vecCards, vector<myCard> &vecWinCards) {
 	int iWinHand = 0;
 	compareXHands(vecCardsArr, uiWinIdx, iWinHand);
 	
-	if(uiWinIdx+1 > vecCardsArr.size()) {
+	if(uiWinIdx < vecCardsArr.size()) {
 		vecWinCards.assign(vecCardsArr[uiWinIdx].begin(), vecCardsArr[uiWinIdx].end());
 		return iWinHand;
 	}
@@ -1266,7 +1266,7 @@ void myPokerTestE() {
 	myPoker oPoker(52);
     oPoker.shuffle(time(NULL));
 	
-	unsigned int uiPlayerCnt = 2;  // 2<= uiPlayerCnt <=10
+	unsigned int uiPlayerCnt = 2;  // 2<=uiPlayerCnt<=10
 	vector< vector<myCard> > vecPlayerCards;
 	vecPlayerCards.resize(uiPlayerCnt);
 	
@@ -1276,8 +1276,13 @@ void myPokerTestE() {
 		for(unsigned int uj=0;uj<uiPlayerCnt;uj++) {
 			oPoker.getCardByIdx(ui*uiPlayerCnt+uj+1, oTmpCard);
 			vecPlayerCards[uj].push_back(oTmpCard);
+			if(ui == 1) { //2张手牌发完
+				cout << "---player " << uj+1 << ":" << endl;
+				prtCards(vecPlayerCards[uj]);
+			}
 		}
 	}
+	
 	//Communitycards
 	vector<myCard> vecCCards;
 	//cut;flop
@@ -1288,15 +1293,19 @@ void myPokerTestE() {
 	oPoker.getCardByIdx(2*uiPlayerCnt+6, oTmpCard);vecCCards.push_back(oTmpCard);
 	//cut;river
 	oPoker.getCardByIdx(2*uiPlayerCnt+8, oTmpCard);vecCCards.push_back(oTmpCard);
+	cout << "---Communitycards:" << endl;
+	prtCards(vecCCards);
 	
 	int iWinHand = 0;
 	vector<myCard> vecWinCards;
-	unsigned int uiWinPlayerIdx = 0;  //由1开始
+	vector<unsigned int> vecWinPlayerIdx;  //idx值由1开始
 	int iTmpHand = 0;
 	vector<myCard> vecTmpCards;
 	for(unsigned int uk=1;uk<=uiPlayerCnt;uk++) {
 		vecPlayerCards[uk-1].insert(vecPlayerCards[uk-1].end(), vecCCards.begin(), vecCCards.end());
 		iTmpHand = getHandInX(vecPlayerCards[uk-1], vecTmpCards);
+		cout << "---player " << uk << ":" << oTexasHands.getTexasHands(iTmpHand) << endl;
+		prtCards(vecTmpCards);
 		if(iTmpHand == 0) {
 			cout << "===error===" << endl;
 			return;
@@ -1304,16 +1313,21 @@ void myPokerTestE() {
 		if(iTmpHand > iWinHand) {
 			iWinHand = iTmpHand;
 			vecWinCards.assign(vecTmpCards.begin(), vecTmpCards.end());
-			uiWinPlayerIdx = uk;
+			vecWinPlayerIdx.resize(1);
+			vecWinPlayerIdx[0] = uk;
 		}
 		else if(iTmpHand == iWinHand) {
 			int ret = compare2Hands(vecWinCards, vecTmpCards, iWinHand);
 			if(ret == 1) {
 				vecWinCards.assign(vecTmpCards.begin(), vecTmpCards.end());
-				uiWinPlayerIdx = uk;
+				vecWinPlayerIdx.resize(1);
+				vecWinPlayerIdx[0] = uk;
 			}
-			else if(ret==0 || ret==2) {
+			else if(ret == 2) {
 				continue;
+			}
+			else if(ret == 0) {
+				vecWinPlayerIdx.push_back(uk);
 			}
 			else {
 				cout << "===error===" << endl;
@@ -1325,7 +1339,7 @@ void myPokerTestE() {
 		}
 	}
 	
-	cout << "winner is player:" << uiWinPlayerIdx << endl;
+	for(unsigned int ux=0;ux!=vecWinPlayerIdx.size();ux++) {cout << "winner is player:" << vecWinPlayerIdx[ux] << endl;}
 	
     cout << "---###---func myPokerTestE() end---" << endl;
     system("PAUSE");
@@ -1346,7 +1360,7 @@ int main(int argc, char *argv[])
       //myPokerTestB();
 	  //myPokerTestC();
 	  //myPokerTestD();
-	  myPokerTestE();
+	  for(int i=1;i<=10;i++){cout<<"Round-"<<i<<endl;myPokerTestE();system("PAUSE");}
       
     system("PAUSE");
     return EXIT_SUCCESS;
