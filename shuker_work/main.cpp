@@ -621,19 +621,29 @@ bool isOnePair(vector<myCard> &vecCards) {
  *HighHand           =1;
  *error              =0;
  */
+#define ROYALSTRAIGHTFLUSH 10
+#define STRAIGHTFLUSH       9
+#define FOUROFAKIND         8
+#define FULLHOUSE           7
+#define FLUSH               6
+#define STRAIGHT            5
+#define THREEOFAKIND        4
+#define TWOPAIRS            3
+#define ONEPAIR             2
+#define HIGHHAND            1
 class texasHands {
 public:
 	texasHands() {
-		mapHands[10] = "RoyalStraightFlush";
-		mapHands[9] = "StraightFlush";
-		mapHands[8] = "FourOfAKind";
-		mapHands[7] = "FullHouse";
-		mapHands[6] = "Flush";
-		mapHands[5] = "Straight";
-		mapHands[4] = "ThreeOfAKind";
-		mapHands[3] = "TwoPairs";
-		mapHands[2] = "OnePair";
-		mapHands[1] = "HighHand";
+		mapHands[ROYALSTRAIGHTFLUSH] = "RoyalStraightFlush";
+		mapHands[STRAIGHTFLUSH] = "StraightFlush";
+		mapHands[FOUROFAKIND] = "FourOfAKind";
+		mapHands[FULLHOUSE] = "FullHouse";
+		mapHands[FLUSH] = "Flush";
+		mapHands[STRAIGHT] = "Straight";
+		mapHands[THREEOFAKIND] = "ThreeOfAKind";
+		mapHands[TWOPAIRS] = "TwoPairs";
+		mapHands[ONEPAIR] = "OnePair";
+		mapHands[HIGHHAND] = "HighHand";
 		mapHands[0] = "error";
 	}
 	
@@ -669,7 +679,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 	int iHand = 0;
 	int iTJQKA = 0;
 	if(isRoyalStraightFlush(vecCards)) {
-		iHand = 10;
+		iHand = ROYALSTRAIGHTFLUSH;
 		//cout << "---RoyalStraightFlush---" << endl;
 		vecSortedFigures.push_back(14);
 		vecSortedFigures.push_back(13);
@@ -678,7 +688,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 		vecSortedFigures.push_back(10);
 	}
 	else if(isStraightFlush(vecCards, iTJQKA)) {  //iTJQKA must equal 0
-		iHand = 9;
+		iHand = STRAIGHTFLUSH;
 		//cout << "---StraightFlush---" << endl;
 		vecSortedFigures.push_back(vecCards[0].getFigure());
 		vecSortedFigures.push_back(vecCards[1].getFigure());
@@ -688,7 +698,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 		sort(vecSortedFigures.begin(), vecSortedFigures.end(), greater<int>());
 	}
 	else if(isFourOfAKind(vecCards)) {
-		iHand = 8;
+		iHand = FOUROFAKIND;
 		//cout << "---FourOfAKind---" << endl;
 		map<int,int> mapFigureCnt;
 		map<int,int>::iterator it;
@@ -719,7 +729,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 		}
 	}
 	else if(isFullHouse(vecCards)) {
-		iHand = 7;
+		iHand = FULLHOUSE;
 		//cout << "---FullHouse---" << endl;
 		map<int,int> mapFigureCnt;
 		map<int,int>::iterator it;
@@ -750,7 +760,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 		}
 	}
 	else if(isFlush(vecCards)) {
-		iHand = 6;
+		iHand = FLUSH;
 		//cout << "---Flush---" << endl;
 		vecSortedFigures.push_back(vecCards[0].getFigure()==1?14:vecCards[0].getFigure());
 		vecSortedFigures.push_back(vecCards[1].getFigure()==1?14:vecCards[1].getFigure());
@@ -760,7 +770,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 		sort(vecSortedFigures.begin(), vecSortedFigures.end(), greater<int>());
 	}
 	else if(isStraight(vecCards, iTJQKA)) {
-		iHand = 5;
+		iHand = STRAIGHT;
 		//cout << "---Straight---" << endl;
 		if(iTJQKA) {
 			vecSortedFigures.push_back(14);
@@ -779,7 +789,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 		}
 	}
 	else if(isThreeOfAKind(vecCards)) {
-		iHand = 4;
+		iHand = THREEOFAKIND;
 		//cout << "---ThreeOfAKind---" << endl;
 		map<int,int> mapFigureCnt;
 		map<int,int>::iterator it;
@@ -815,7 +825,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 		vecSortedFigures.push_back(fig_1_s);
 	}
 	else if(isTwoPairs(vecCards)) {
-		iHand = 3;
+		iHand = TWOPAIRS;
 		//cout << "---TwoPairs---" << endl;
 		map<int,int> mapFigureCnt;
 		map<int,int>::iterator it;
@@ -851,7 +861,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 		vecSortedFigures.push_back(fig_1);
 	}
 	else if(isOnePair(vecCards)) {
-		iHand = 2;
+		iHand = ONEPAIR;
 		//cout << "---OnePair---" << endl;
 		map<int,int> mapFigureCnt;
 		map<int,int>::iterator it;
@@ -891,7 +901,7 @@ int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
 		vecSortedFigures.push_back(fig_1_s);
 	}
 	else {
-		iHand = 1;
+		iHand = HIGHHAND;
 		//cout << "---HighHand---" << endl;
 		vecSortedFigures.push_back(vecCards[0].getFigure()==1?14:vecCards[0].getFigure());
 		vecSortedFigures.push_back(vecCards[1].getFigure()==1?14:vecCards[1].getFigure());
@@ -1261,13 +1271,14 @@ void myPokerTestD() {
 }
 
 //模拟一轮完整比赛
+#define TEST_E_PLAYER 6
 void myPokerTestE() {
 	cout << "---###---func myPokerTestE() start---" << endl;
 	
 	myPoker oPoker(52);
     oPoker.shuffle(time(NULL));
 	
-	unsigned int uiPlayerCnt = 2;  // 2<=uiPlayerCnt<=10
+	unsigned int uiPlayerCnt = TEST_E_PLAYER;  // 2<=uiPlayerCnt<=10
 	vector< vector<myCard> > vecPlayerCards;
 	vecPlayerCards.resize(uiPlayerCnt);
 	
@@ -1346,6 +1357,179 @@ void myPokerTestE() {
     return;
 }
 
+//统计获胜牌型的比例
+#define TEST_F_PLAYER 6
+void myPokerTestF() {
+	cout << "---###---func myPokerTestF() start---" << endl;
+	
+	myPoker oPoker(52);
+	unsigned int uiPlayerCnt = TEST_F_PLAYER;  // 2<=uiPlayerCnt<=10
+	vector< vector<myCard> > vecPlayerCards;
+	myCard oTmpCard;
+	vector<myCard> vecCCards;
+	int iWinHand = 0;
+	vector<myCard> vecWinCards;
+	vector<unsigned int> vecWinPlayerIdx;  //idx值由1开始
+	int iTmpHand = 0;
+	vector<myCard> vecTmpCards;
+	
+	int iRoyalStraightFlushCnt = 0;
+	int iStraightFlushCnt = 0;
+	int iFourOfAKindCnt = 0;
+	int iFullHouseCnt = 0;
+	int iFlushCnt = 0;
+	int iStraightCnt = 0;
+	int iThreeOfAKindCnt = 0;
+	int iTwoPairsCnt = 0;
+	int iOnePairCnt = 0;
+	int iHighHandCnt = 0;
+	int iX = 10000;
+	int iY = 100;  //应该 大大小于'MAX_RAND' 同一轮内(同一iX下循环iY次)不能一直使用shuffle函数返回的rand序列作为种子
+	
+	unsigned int uiSeed = time(NULL);
+	for(int i=0;i<iX;i++) {
+		Sleep(100);  //ms  每一轮sleep一下 防止cpu过高
+		if(i%15 == 0) {  //每15*100ms 换种子 不再采用shuffle函数返回的rand序列
+			uiSeed = time(NULL);
+		}
+		for(int j=1;j<=iY;j++) {
+			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子(shuffle函数返回的rand序列) 如果是固定种子(同一time(NULL)下循环)则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
+			
+			vecPlayerCards.clear();
+			vecPlayerCards.resize(uiPlayerCnt);
+			//Holecards
+			for(unsigned int ui=0;ui<2;ui++) {
+				for(unsigned int uj=0;uj<uiPlayerCnt;uj++) {
+					oPoker.getCardByIdx(ui*uiPlayerCnt+uj+1, oTmpCard);
+					vecPlayerCards[uj].push_back(oTmpCard);
+					/* if(ui == 1) { //2张手牌发完
+						cout << "---player " << uj+1 << ":" << endl;
+						prtCards(vecPlayerCards[uj]);
+					} */
+				}
+			}
+			//Communitycards
+			vecCCards.clear();
+			//cut;flop
+			oPoker.getCardByIdx(2*uiPlayerCnt+2, oTmpCard);vecCCards.push_back(oTmpCard);
+			oPoker.getCardByIdx(2*uiPlayerCnt+3, oTmpCard);vecCCards.push_back(oTmpCard);
+			oPoker.getCardByIdx(2*uiPlayerCnt+4, oTmpCard);vecCCards.push_back(oTmpCard);
+			//cut;turn
+			oPoker.getCardByIdx(2*uiPlayerCnt+6, oTmpCard);vecCCards.push_back(oTmpCard);
+			//cut;river
+			oPoker.getCardByIdx(2*uiPlayerCnt+8, oTmpCard);vecCCards.push_back(oTmpCard);
+			//cout << "---Communitycards:" << endl;
+			//prtCards(vecCCards);
+			
+			iWinHand = 0;
+			vecWinCards.clear();
+			vecWinPlayerIdx.clear();  //idx值由1开始
+			iTmpHand = 0;
+			vecTmpCards.clear();
+			for(unsigned int uk=1;uk<=uiPlayerCnt;uk++) {
+				vecPlayerCards[uk-1].insert(vecPlayerCards[uk-1].end(), vecCCards.begin(), vecCCards.end());
+				iTmpHand = getHandInX(vecPlayerCards[uk-1], vecTmpCards);
+				//cout << "---player " << uk << ":" << oTexasHands.getTexasHands(iTmpHand) << endl;
+				//prtCards(vecTmpCards);
+				if(iTmpHand == 0) {
+					cout << "===myPokerTestF error-A===" << endl;
+					return;
+				}
+				if(iTmpHand > iWinHand) {
+					iWinHand = iTmpHand;
+					vecWinCards.assign(vecTmpCards.begin(), vecTmpCards.end());
+					vecWinPlayerIdx.resize(1);
+					vecWinPlayerIdx[0] = uk;
+				}
+				else if(iTmpHand == iWinHand) {
+					int ret = compare2Hands(vecWinCards, vecTmpCards, iWinHand);
+					if(ret == 1) {
+						vecWinCards.assign(vecTmpCards.begin(), vecTmpCards.end());
+						vecWinPlayerIdx.resize(1);
+						vecWinPlayerIdx[0] = uk;
+					}
+					else if(ret == 2) {
+						continue;
+					}
+					else if(ret == 0) {
+						vecWinPlayerIdx.push_back(uk);
+					}
+					else {
+						cout << "===myPokerTestF error-B===" << endl;
+						return;
+					}
+				}
+				else {
+					continue;
+				}
+			}
+			//for(unsigned int ux=0;ux!=vecWinPlayerIdx.size();ux++) {cout << "winner is player:" << vecWinPlayerIdx[ux] << endl;}
+			
+			if(iWinHand == ROYALSTRAIGHTFLUSH) {
+				iRoyalStraightFlushCnt++;
+				//cout << "---winner is RoyalStraightFlush---" << endl;
+			}
+			else if(iWinHand == STRAIGHTFLUSH) {
+				iStraightFlushCnt++;
+				//cout << "---winner is StraightFlush---" << endl;
+			}
+			else if(iWinHand == FOUROFAKIND) {
+				iFourOfAKindCnt++;
+				//cout << "---winner is FourOfAKind---" << endl;
+			}
+			else if(iWinHand == FULLHOUSE) {
+				iFullHouseCnt++;
+				//cout << "---winner is FullHouse---" << endl;
+			}
+			else if(iWinHand == FLUSH) {
+				iFlushCnt++;
+				//cout << "---winner is Flush---" << endl;
+			}
+			else if(iWinHand == STRAIGHT) {
+				iStraightCnt++;
+				//cout << "---winner is Straight---" << endl;
+			}
+			else if(iWinHand == THREEOFAKIND) {
+				iThreeOfAKindCnt++;
+				//cout << "---winner is ThreeOfAKind---" << endl;
+			}
+			else if(iWinHand == TWOPAIRS) {
+				iTwoPairsCnt++;
+				//cout << "---winner is TwoPairs---" << endl;
+			}
+			else if(iWinHand == ONEPAIR) {
+				iOnePairCnt++;
+				//cout << "---winner is OnePair---" << endl;
+			}
+			else if(iWinHand == HIGHHAND) {
+				iHighHandCnt++;
+				//cout << "---winner is HighHand---" << endl;
+			}
+			else {
+				cout << "===myPokerTestF error-C===" << endl;
+				return;
+			}
+		}
+    }
+	
+	int iTotalCnt = iX*iY;
+	cout << "---Total: " << iTotalCnt << "---" << endl;
+	cout << "---RoyalStraightFlush: " << iRoyalStraightFlushCnt << "/" << iTotalCnt << "=" << iRoyalStraightFlushCnt*1.0/iTotalCnt << endl;
+	cout << "---     StraightFlush: " << iStraightFlushCnt << "/" << iTotalCnt << "=" << iStraightFlushCnt*1.0/iTotalCnt << endl;
+	cout << "---       FourOfAKind: " << iFourOfAKindCnt << "/" << iTotalCnt << "=" << iFourOfAKindCnt*1.0/iTotalCnt << endl;
+	cout << "---         FullHouse: " << iFullHouseCnt << "/" << iTotalCnt << "=" << iFullHouseCnt*1.0/iTotalCnt << endl;
+	cout << "---             Flush: " << iFlushCnt << "/" << iTotalCnt << "=" << iFlushCnt*1.0/iTotalCnt << endl;
+	cout << "---          Straight: " << iStraightCnt << "/" << iTotalCnt << "=" << iStraightCnt*1.0/iTotalCnt << endl;
+	cout << "---      ThreeOfAKind: " << iThreeOfAKindCnt << "/" << iTotalCnt << "=" << iThreeOfAKindCnt*1.0/iTotalCnt << endl;
+	cout << "---          TwoPairs: " << iTwoPairsCnt << "/" << iTotalCnt << "=" << iTwoPairsCnt*1.0/iTotalCnt << endl;
+	cout << "---           OnePair: " << iOnePairCnt << "/" << iTotalCnt << "=" << iOnePairCnt*1.0/iTotalCnt << endl;
+	cout << "---          HighHand: " << iHighHandCnt << "/" << iTotalCnt << "=" << iHighHandCnt*1.0/iTotalCnt << endl;
+	
+	cout << "---###---func myPokerTestF() end---" << endl;
+    system("PAUSE");
+    return;
+}
+
 int main(int argc, char *argv[])
 {
       //testMysqlEscape();
@@ -1360,7 +1544,8 @@ int main(int argc, char *argv[])
       //myPokerTestB();
 	  //myPokerTestC();
 	  //myPokerTestD();
-	  for(int i=1;i<=10;i++){cout<<"Round-"<<i<<endl;myPokerTestE();system("PAUSE");}
+	  //for(int i=1;i<=10;i++){cout<<"Round-"<<i<<endl;myPokerTestE();system("PAUSE");}
+	  myPokerTestF();
       
     system("PAUSE");
     return EXIT_SUCCESS;
