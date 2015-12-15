@@ -4,6 +4,8 @@
 #include <vector>
 #include <fstream>
 #include <windows.h>  //Sleep
+#include <time.h>
+#include <algorithm>
 
 #include "mysql_escape.h"
 
