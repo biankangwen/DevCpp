@@ -1117,12 +1117,19 @@ void myPokerTestC() {
 	int iHighHandCnt = 0;
 	int iX = 10000;
 	int iY = 100;  //应该 大大小于'MAX_RAND' 同一轮内(同一iX下循环iY次)不能一直使用shuffle函数返回的rand序列作为种子
+	int iPerFlag = 1;
 	
 	unsigned int uiSeed = time(NULL);
 	for(int i=0;i<iX;i++) {
 		Sleep(100);  //ms  每一轮sleep一下 防止cpu过高
 		if(i%15 == 0) {  //每15*100ms 换种子 不再采用shuffle函数返回的rand序列
 			uiSeed = time(NULL);
+			if((i*100/iX>90 && iPerFlag==9) || (i*100/iX>80 && iPerFlag==8) || (i*100/iX>70 && iPerFlag==7) || 
+			   (i*100/iX>60 && iPerFlag==6) || (i*100/iX>50 && iPerFlag==5) || (i*100/iX>40 && iPerFlag==4) || 
+			   (i*100/iX>30 && iPerFlag==3) || (i*100/iX>20 && iPerFlag==2) || (i*100/iX>10 && iPerFlag==1)) {
+				iPerFlag++;
+				cout << "===" << i*100/iX << "%===" << endl;
+			}
 		}
 		for(int j=1;j<=iY;j++) {
 			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子(shuffle函数返回的rand序列) 如果是固定种子(同一time(NULL)下循环)则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
@@ -1385,12 +1392,19 @@ void myPokerTestF() {
 	int iHighHandCnt = 0;
 	int iX = 10000;
 	int iY = 100;  //应该 大大小于'MAX_RAND' 同一轮内(同一iX下循环iY次)不能一直使用shuffle函数返回的rand序列作为种子
+	int iPerFlag = 1;
 	
 	unsigned int uiSeed = time(NULL);
 	for(int i=0;i<iX;i++) {
 		Sleep(100);  //ms  每一轮sleep一下 防止cpu过高
 		if(i%15 == 0) {  //每15*100ms 换种子 不再采用shuffle函数返回的rand序列
 			uiSeed = time(NULL);
+			if((i*100/iX>90 && iPerFlag==9) || (i*100/iX>80 && iPerFlag==8) || (i*100/iX>70 && iPerFlag==7) || 
+			   (i*100/iX>60 && iPerFlag==6) || (i*100/iX>50 && iPerFlag==5) || (i*100/iX>40 && iPerFlag==4) || 
+			   (i*100/iX>30 && iPerFlag==3) || (i*100/iX>20 && iPerFlag==2) || (i*100/iX>10 && iPerFlag==1)) {
+				iPerFlag++;
+				cout << "===" << i*100/iX << "%===" << endl;
+			}
 		}
 		for(int j=1;j<=iY;j++) {
 			uiSeed = oPoker.shuffle(uiSeed);  //每次洗牌都换种子(shuffle函数返回的rand序列) 如果是固定种子(同一time(NULL)下循环)则洗牌序列相同 多次洗牌会导致牌被洗回原样(导致所出现的牌型固定有N种)
