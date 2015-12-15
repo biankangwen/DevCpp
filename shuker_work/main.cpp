@@ -1126,9 +1126,9 @@ void myPokerTestC() {
 		Sleep(100);  //ms  每一轮sleep一下 防止cpu过高
 		if(i%15 == 0) {  //每15*100ms 换种子 不再采用shuffle函数返回的rand序列
 			uiSeed = time(NULL);
-			if((i*100/iX>90 && iPerFlag==9) || (i*100/iX>80 && iPerFlag==8) || (i*100/iX>70 && iPerFlag==7) || 
-			   (i*100/iX>60 && iPerFlag==6) || (i*100/iX>50 && iPerFlag==5) || (i*100/iX>40 && iPerFlag==4) || 
-			   (i*100/iX>30 && iPerFlag==3) || (i*100/iX>20 && iPerFlag==2) || (i*100/iX>10 && iPerFlag==1)) {
+			if((i*100/iX>=90 && iPerFlag==9) || (i*100/iX>=80 && iPerFlag==8) || (i*100/iX>=70 && iPerFlag==7) || 
+			   (i*100/iX>=60 && iPerFlag==6) || (i*100/iX>=50 && iPerFlag==5) || (i*100/iX>=40 && iPerFlag==4) || 
+			   (i*100/iX>=30 && iPerFlag==3) || (i*100/iX>=20 && iPerFlag==2) || (i*100/iX>=10 && iPerFlag==1)) {
 				iPerFlag++;
 				cout << "===" << i*100/iX << "%===" << endl;
 			}
@@ -1401,9 +1401,9 @@ void myPokerTestF() {
 		Sleep(100);  //ms  每一轮sleep一下 防止cpu过高
 		if(i%15 == 0) {  //每15*100ms 换种子 不再采用shuffle函数返回的rand序列
 			uiSeed = time(NULL);
-			if((i*100/iX>90 && iPerFlag==9) || (i*100/iX>80 && iPerFlag==8) || (i*100/iX>70 && iPerFlag==7) || 
-			   (i*100/iX>60 && iPerFlag==6) || (i*100/iX>50 && iPerFlag==5) || (i*100/iX>40 && iPerFlag==4) || 
-			   (i*100/iX>30 && iPerFlag==3) || (i*100/iX>20 && iPerFlag==2) || (i*100/iX>10 && iPerFlag==1)) {
+			if((i*100/iX>=90 && iPerFlag==9) || (i*100/iX>=80 && iPerFlag==8) || (i*100/iX>=70 && iPerFlag==7) || 
+			   (i*100/iX>=60 && iPerFlag==6) || (i*100/iX>=50 && iPerFlag==5) || (i*100/iX>=40 && iPerFlag==4) || 
+			   (i*100/iX>=30 && iPerFlag==3) || (i*100/iX>=20 && iPerFlag==2) || (i*100/iX>=10 && iPerFlag==1)) {
 				iPerFlag++;
 				cout << "===" << i*100/iX << "%===" << endl;
 			}
