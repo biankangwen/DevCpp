@@ -12,45 +12,45 @@
 using namespace std;
 
 void testMysqlEscape() {
-  cout << "---###---func testMysqlEscape() start---";
+  cout << "---###---func testMysqlEscape() start---" << endl;
   
   string a = "\'xx\"";
   string b = EscapeString2(a);
   printf("a:%s\n", a.c_str());
   printf("b:%s\n", b.c_str());
   
-  cout << "---###---func testMysqlEscape() end---";
+  cout << "---###---func testMysqlEscape() end---" << endl;
   system("PAUSE");
   return;
 }
 
 void myFileOp() {
-  cout << "---###---func myFileOp() start---";
+  cout << "---###---func myFileOp() start---" << endl;
   
-  ofstream ofile("a.txt",ios::app);
+  ofstream ofile("myFileOpW.txt",ios::app);
   ofile << "haha" << ":[" << 5 << "]" << endl;
   ofile.close();
   
-  cout << "---###---func myFileOp() end---";
+  cout << "---###---func myFileOp() end---" << endl;
   system("PAUSE");
   return;
 }
 
 void myTime() {
-     cout << "---###---func myTime() start---";
+     cout << "---###---func myTime() start---" << endl;
 	 
 	 time_t tTime = time(NULL);
      char szTime[16] = {0};
      strftime(szTime,sizeof(szTime),"%X",localtime(&tTime));
      printf("tTime:%u\nszTime:%s\n",tTime,szTime);
      
-     cout << "---###---func myTime() end---";
+     cout << "---###---func myTime() end---" << endl;
      system("PAUSE");
      return;
 }
 
 void puzzleA() {
-     cout << "---###---func puzzleA() start---";
+     cout << "---###---func puzzleA() start---" << endl;
 	 
 	 map<int, vector<string> > mapSum;
      map<int, map<string, int> > mapProduct;  //因为乙先问 则乙的数据结构和甲不同 
@@ -89,7 +89,7 @@ void puzzleA() {
                      flag++;
                      strRet = it_2->second;
                  }
-                 if(flag >1) {
+                 if(flag > 1) {
                      break;
                  }
              }
@@ -111,7 +111,7 @@ void puzzleA() {
          }
      }*/
      
-     cout << "---###---func puzzleA() end---";
+     cout << "---###---func puzzleA() end---" << endl;
      system("PAUSE");
      return;
 }
@@ -1057,7 +1057,7 @@ void myPokerTestA() {
 
 //测试牌型判定单个函数 
 void myPokerTestB() {
-    cout << "---###---func myPokerTestC() end---" << endl;
+    cout << "---###---func myPokerTestB() end---" << endl;
 	
 	vector<myCard> vec;
     myCard oCard1(10,"c");vec.push_back(oCard1);
@@ -1096,14 +1096,14 @@ void myPokerTestB() {
         cout << "---OnePair---" << endl;
     }
     
-    cout << "---###---func myPokerTestC() end---" << endl;
+    cout << "---###---func myPokerTestB() end---" << endl;
     system("PAUSE");
     return;
 }
 
 //统计各个牌型出现的次数
 void myPokerTestC() {
-    cout << "---###---func myPokerTestB() start---" << endl;
+    cout << "---###---func myPokerTestC() start---" << endl;
 	
 	myPoker oPoker(52);
     vector<myCard> vec;
@@ -1193,7 +1193,7 @@ void myPokerTestC() {
 	cout << "---           OnePair: " << iOnePairCnt << "/" << iTotalCnt << "=" << iOnePairCnt*1.0/iTotalCnt << endl;
 	cout << "---          HighHand: " << iHighHandCnt << "/" << iTotalCnt << "=" << iHighHandCnt*1.0/iTotalCnt << endl;
 	
-    cout << "---###---func myPokerTestB() end---" << endl;
+    cout << "---###---func myPokerTestC() end---" << endl;
     system("PAUSE");
     return;
 }
@@ -1546,10 +1546,19 @@ void myPokerTestF() {
     return;
 }
 
+//统计调节参数后获胜牌型的比例
+#define TEST_G_PLAYER 6
+void myPokerTestG() {
+	cout << "---###---func myPokerTestG() start---" << endl;
+    cout << "---###---func myPokerTestG() end---" << endl;
+    system("PAUSE");
+    return;
+}
+
 int main(int argc, char *argv[])
 {
       //testMysqlEscape();
-	  //myFileOp();
+	  myFileOp();
 	  //myTime();
       
       //puzzleA();
@@ -1560,8 +1569,8 @@ int main(int argc, char *argv[])
       //myPokerTestB();
 	  //myPokerTestC();
 	  //myPokerTestD();
-	  //for(int i=1;i<=10;i++){cout<<"Round-"<<i<<endl;myPokerTestE();system("PAUSE");}
-	  myPokerTestF();
+	  //for(int i=1;i<=10;i++){cout<<"Round-"<<i<<endl;myPokerTestE();}
+	  //myPokerTestF();
       
     system("PAUSE");
     return EXIT_SUCCESS;
