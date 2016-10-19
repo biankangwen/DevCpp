@@ -11,6 +11,21 @@
 
 using namespace std;
 
+void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c) {
+  v.clear();
+  std::string::size_type pos1, pos2;
+  pos2 = s.find(c);
+  pos1 = 0;
+  while(std::string::npos != pos2) {
+    v.push_back(s.substr(pos1, pos2-pos1));
+ 
+    pos1 = pos2 + c.size();
+    pos2 = s.find(c, pos1);
+  }
+  if(pos1 != s.length())
+    v.push_back(s.substr(pos1));
+}
+
 void testMysqlEscape() {
   cout << "---###---func testMysqlEscape() start---" << endl;
   
@@ -25,11 +40,58 @@ void testMysqlEscape() {
 }
 
 void myFileOp() {
+  /*
+   * ifstream -- 从已有的文件读
+   * ofstream -- 向文件写内容
+   * fstream  -- 打开文件供读写
+   * fstream有两个子类:ifstream(input file stream),ofstream(outpu file stream);ifstream默认以输入方式打开文件,而ofstream默认以输出方式打开文件
+   */
   cout << "---###---func myFileOp() start---" << endl;
   
+  /*
   ofstream ofile("myFileOpW.txt",ios::app);
   ofile << "haha" << ":[" << 5 << "]" << endl;
   ofile.close();
+  */
+  
+  /*
+  ifstream ifile("myFileOpR.txt",ios::in);
+  if(!ifile) {  //重载了!运算符
+      cout << "---error: open R_file fail" << "---" << endl;
+      return;
+  }
+  string strLineR;
+  int iLineNumR = 1;
+  while(getline(ifile, strLineR)) {  //读utf8中文文件会有乱码
+     cout << "---LineR[" << iLineNumR << "]:(" << strLineR << ")---" << endl;
+      iLineNumR++;
+  }
+  ifile.close();
+  */
+  
+  fstream iofile("myFileOpRW.txt");  //0-定位在开头 //等同:iofile.open("c:\\config.sys"); 等同:iofile.open("c:\\config.sys",ios::in|ios::out,0);
+  if(!iofile) {  //重载了!运算符
+      cout << "---error: open RW_file fail" << "---" << endl;
+      return;
+  }
+  string strLine;
+  int iLineNum = 1;
+  string strFlag = "Dialogue";
+  string strD = ":";
+  while(getline(iofile, strLine)) {
+      if(strLine.find(strFlag) != string::npos) {
+	      vector<std::string> tmpVec;
+	      SplitString(strLine, tmpVec, strD);
+		  for(unsigned int ui=0;ui!=tmpVec.size();ui++) {
+		      cout << "---Line[" << iLineNum << "][" << ui << "]:(" << tmpVec[ui] << ")---" << endl;
+		  }
+		  string b_second = strLine.substr(17,2);
+		  string e_second = strLine.substr(28,2);
+		  cout << "---Line[" << iLineNum << "]:(" << b_second << "," << e_second << ")---" << endl;
+	  }
+	  iLineNum++;
+  }
+  iofile.close();
   
   cout << "---###---func myFileOp() end---" << endl;
   system("PAUSE");
@@ -124,12 +186,12 @@ void puzzleA() {
  */
 //提供给'C_n_m'调用 不单独调用
 void C_n_m_private(vector< vector<unsigned int> > &vecRes, vector<unsigned int> &vecTmpRes, unsigned int n, unsigned int m, int unsigned uiBegin, bool bCout) {
-	if(vecTmpRes.size() < m) {
+	 if(vecTmpRes.size() < m) {
          cout << "---error: [C_n_m_private]a invalid param vecTmpRes.size:" << vecTmpRes.size() << "<m:" << m << "---" << endl;
          return;
      }
 	
-	if(n<m || m==0) {
+	 if(n<m || m==0) {
          cout << "---error: [C_n_m_private]a invalid param n:" << n << ";m:" << m << "---" << endl;
          return;
      }
@@ -667,7 +729,7 @@ private:
 static texasHands oTexasHands;
 
 /*5张牌计算牌型 采用'mapHands'的定义返回牌型code
- *并按可比较的点数降序排列 如3333K 22Q84
+ *并按可比较的点数降序排列 如3333K 22Q87
  *A=14 K=13 Q=12 J=11
  */
 int getHand(vector<myCard> &vecCards, vector<int> &vecSortedFigures) {
