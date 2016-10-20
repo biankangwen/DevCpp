@@ -74,24 +74,100 @@ void myFileOp() {
       cout << "---error: open RW_file fail" << "---" << endl;
       return;
   }
+  ofstream ofile2;
+  ofile2.open("myFileOpRW_2.txt");  //等同:ios::out|ios::trunc
+  if(!ofile2) {  //重载了!运算符
+      cout << "---error: open W_file2 fail" << "---" << endl;
+      return;
+  }
   string strLine;
   int iLineNum = 1;
   string strFlag = "Dialogue";
-  string strD = ":";
   while(getline(iofile, strLine)) {
       if(strLine.find(strFlag) != string::npos) {
-	      vector<std::string> tmpVec;
+	      /*
+		  vector<std::string> tmpVec;
+		  string strD = ":";
 	      SplitString(strLine, tmpVec, strD);
 		  for(unsigned int ui=0;ui!=tmpVec.size();ui++) {
 		      cout << "---Line[" << iLineNum << "][" << ui << "]:(" << tmpVec[ui] << ")---" << endl;
 		  }
-		  string b_second = strLine.substr(17,2);
-		  string e_second = strLine.substr(28,2);
-		  cout << "---Line[" << iLineNum << "]:(" << b_second << "," << e_second << ")---" << endl;
+		  */
+		  int i_b_hour_pos = 12;
+		  int i_b_min_pos = 14;
+		  int i_b_sec_pos = 17;
+		  int i_e_hour_pos = 23;
+		  int i_e_min_pos = 25;
+		  int i_e_sec_pos = 28;
+		  string str_b_hour = strLine.substr(i_b_hour_pos,1);
+		  string str_b_min = strLine.substr(i_b_min_pos,2);
+		  string str_b_sec = strLine.substr(i_b_sec_pos,2);
+		  string str_e_hour = strLine.substr(i_e_hour_pos,1);
+		  string str_e_min = strLine.substr(i_e_min_pos,2);
+		  string str_e_sec = strLine.substr(i_e_sec_pos,2);
+		  //cout << "---oldLine[" << iLineNum << "]:(" << strLine << ")---" << endl;
+		  //cout << "---oldLine[" << iLineNum << "]:(" << str_b_hour << ":" << str_b_min << ":" << str_b_sec << "," << str_e_hour << ":" << str_e_min << ":" << str_e_sec << ")---" << endl;
+		  
+		  int iAddMin = 0;
+		  int iAddHour = 0;
+		  int i_sec_pos, i_min_pos, i_hour_pos;
+		  string str_sec, str_min, str_hour;
+		  char tmp[8] = {};
+		  for(int i=0; i<2; i++) {
+		      if(i == 0) {
+			      i_sec_pos = i_b_sec_pos;
+				  i_min_pos = i_b_min_pos;
+				  i_hour_pos = i_b_hour_pos;
+				  str_sec = str_b_sec;
+				  str_min = str_b_min;
+				  str_hour = str_b_hour;
+			  }
+			  else {
+			      i_sec_pos = i_e_sec_pos;
+				  i_min_pos = i_e_min_pos;
+				  i_hour_pos = i_e_hour_pos;
+				  str_sec = str_e_sec;
+				  str_min = str_e_min;
+				  str_hour = str_e_hour;
+			  }
+			  int i_sec = atoi(str_sec.c_str());
+		      i_sec += 1;  //delay 1s
+		      iAddMin = i_sec/60;
+		      i_sec %= 60;
+		      if(i_sec < 10) {
+		          snprintf(tmp,sizeof(tmp),"0%d",i_sec);
+		      }
+		      else {
+		          snprintf(tmp,sizeof(tmp),"%d",i_sec);
+		      }
+		      strLine.replace(i_sec_pos, 2, tmp, 2);
+		      if(iAddMin > 0) {
+		          int i_min = atoi(str_min.c_str());
+		          i_min += iAddMin;
+		          iAddHour = i_min/60;
+		          i_min %= 60;
+		          if(i_min < 10) {
+		              snprintf(tmp,sizeof(tmp),"0%d",i_min);
+		          }
+		          else {
+		              snprintf(tmp,sizeof(tmp),"%d",i_min);
+		          }
+		          strLine.replace(i_min_pos, 2, tmp, 2);
+		          if(iAddHour > 0) {
+		              int i_hour = atoi(str_hour.c_str());
+		              i_hour += iAddHour;
+		              snprintf(tmp,sizeof(tmp),"%d",i_hour);
+		              strLine.replace(i_hour_pos, 1, tmp, 1);
+		          }
+		      }
+		  }
+		  //cout << "---newLine[" << iLineNum << "]:(" << strLine << ")---" << endl;
 	  }
+	  ofile2 << strLine << endl;
 	  iLineNum++;
   }
   iofile.close();
+  ofile2.close();
   
   cout << "---###---func myFileOp() end---" << endl;
   system("PAUSE");
