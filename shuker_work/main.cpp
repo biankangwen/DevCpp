@@ -80,26 +80,58 @@ void myFileOp() {
       cout << "---error: open W_file2 fail" << "---" << endl;
       return;
   }
+  iofile.close();
+  ofile2.close();
+  
+  cout << "---###---func myFileOp() end---" << endl;
+  system("PAUSE");
+  return;
+}
+
+void myAssFileOp() {
+  cout << "---###---func myAssFileOp() start---" << endl;
+  
+  string strOpFileName, strRetFileName;
+  int iOpSec = 0;
+  cout << "---input strOpFileName---" << endl;
+  cin >> strOpFileName;
+  cout << "---input strRetFileName---" << endl;
+  cin >> strRetFileName;
+  cout << "---input iOpSec[>0:delay <0:ahead]---" << endl;
+  cin >> iOpSec;  //>0:delay <0:ahead
+  if(iOpSec == 0) {
+      cout << "---error: param:opSec=0---" << endl;
+      return;
+  }
+  
+  strOpFileName += ".ass";
+  strRetFileName += ".ass";
+  
+  fstream iofile(strOpFileName.c_str());  //0-定位在开头 //等同:iofile.open("c:\\config.sys"); 等同:iofile.open("c:\\config.sys",ios::in|ios::out,0);
+  if(!iofile) {  //重载了!运算符
+      cout << "---error: open " << strOpFileName << " fail" << "---" << endl;
+      return;
+  }
+  ofstream ofile;
+  ofile.open(strRetFileName.c_str());  //等同:ios::out|ios::trunc
+  if(!ofile) {  //重载了!运算符
+      cout << "---error: open " << strRetFileName << " fail" << "---" << endl;
+      return;
+  }
+  
+  //Dialogue: 0,0:00:58.40,0:00:59.57,*Default,NTP,0,0,0,,我去看看\N{\fn微软雅黑}{\b0}{\fs14}{\3c&H202020&}{\shad1}I'm gonna go check it out.
   string strLine;
   int iLineNum = 1;
   string strFlag = "Dialogue";
   while(getline(iofile, strLine)) {
       if(strLine.find(strFlag) != string::npos) {
-	      /*
-		  vector<std::string> tmpVec;
-		  string strD = ":";
-	      SplitString(strLine, tmpVec, strD);
-		  for(unsigned int ui=0;ui!=tmpVec.size();ui++) {
-		      cout << "---Line[" << iLineNum << "][" << ui << "]:(" << tmpVec[ui] << ")---" << endl;
-		  }
-		  */
 		  int i_b_hour_pos = 12;
 		  int i_b_min_pos = 14;
 		  int i_b_sec_pos = 17;
 		  int i_e_hour_pos = 23;
 		  int i_e_min_pos = 25;
 		  int i_e_sec_pos = 28;
-		  string str_b_hour = strLine.substr(i_b_hour_pos,1);
+		  string str_b_hour = strLine.substr(i_b_hour_pos,1);  //hour只有一位 h:mm:ss.xx 所以最长只能9小时
 		  string str_b_min = strLine.substr(i_b_min_pos,2);
 		  string str_b_sec = strLine.substr(i_b_sec_pos,2);
 		  string str_e_hour = strLine.substr(i_e_hour_pos,1);
@@ -130,46 +162,318 @@ void myFileOp() {
 				  str_min = str_e_min;
 				  str_hour = str_e_hour;
 			  }
-			  int i_sec = atoi(str_sec.c_str());
-		      i_sec += 1;  //delay 1s
-		      iAddMin = i_sec/60;
-		      i_sec %= 60;
-		      if(i_sec < 10) {
-		          snprintf(tmp,sizeof(tmp),"0%d",i_sec);
-		      }
-		      else {
-		          snprintf(tmp,sizeof(tmp),"%d",i_sec);
-		      }
-		      strLine.replace(i_sec_pos, 2, tmp, 2);
-		      if(iAddMin > 0) {
-		          int i_min = atoi(str_min.c_str());
-		          i_min += iAddMin;
-		          iAddHour = i_min/60;
-		          i_min %= 60;
-		          if(i_min < 10) {
-		              snprintf(tmp,sizeof(tmp),"0%d",i_min);
+			  
+			  if(iOpSec > 0) {  //delay iOpSec seconds
+			      int i_sec = atoi(str_sec.c_str());
+		          i_sec += iOpSec;
+		          iAddMin = i_sec/60;
+		          i_sec %= 60;
+		          if(i_sec < 10) {
+		              snprintf(tmp,sizeof(tmp),"0%d",i_sec);
 		          }
 		          else {
-		              snprintf(tmp,sizeof(tmp),"%d",i_min);
+		              snprintf(tmp,sizeof(tmp),"%d",i_sec);
 		          }
-		          strLine.replace(i_min_pos, 2, tmp, 2);
-		          if(iAddHour > 0) {
-		              int i_hour = atoi(str_hour.c_str());
-		              i_hour += iAddHour;
-		              snprintf(tmp,sizeof(tmp),"%d",i_hour);
-		              strLine.replace(i_hour_pos, 1, tmp, 1);
+		          strLine.replace(i_sec_pos, 2, tmp, 2);
+		          if(iAddMin > 0) {
+		              int i_min = atoi(str_min.c_str());
+		              i_min += iAddMin;
+		              iAddHour = i_min/60;
+		              i_min %= 60;
+		              if(i_min < 10) {
+		                  snprintf(tmp,sizeof(tmp),"0%d",i_min);
+		              }
+		              else {
+		                  snprintf(tmp,sizeof(tmp),"%d",i_min);
+		              }
+		              strLine.replace(i_min_pos, 2, tmp, 2);
+		              if(iAddHour > 0) {
+		                  int i_hour = atoi(str_hour.c_str());
+		                  i_hour += iAddHour;
+						  if(i_hour < 10) {  //[0,9]
+		                      snprintf(tmp,sizeof(tmp),"%d",i_hour);
+		                      strLine.replace(i_hour_pos, 1, tmp, 1);
+						  }
+						  else {  //hour只有一位 h:mm:ss.xx 所以最长只能9小时
+						      char err[64] = {0};
+							  snprintf(err,sizeof(err),"---error: oldLine[%d]:(hour can not delay %ds, over 10h)---",iLineNum,iOpSec);
+							  strLine = err;
+							  cout << strLine << endl;
+							  break;
+						  }
+		              }
 		          }
-		      }
+			  }
+			  else {  //ahead iOpSec seconds
+			      int i_sec = atoi(str_sec.c_str());
+				  i_sec += iOpSec;
+				  if(i_sec >= 10) {
+				      snprintf(tmp,sizeof(tmp),"%d",i_sec);
+					  strLine.replace(i_sec_pos, 2, tmp, 2);
+				  }
+				  else if(i_sec >= 0) {
+				      snprintf(tmp,sizeof(tmp),"0%d",i_sec);
+					  strLine.replace(i_sec_pos, 2, tmp, 2);
+				  }
+				  else {
+				      iAddMin = -1 + i_sec/60;
+					  i_sec += (-1)*iAddMin*60;
+					  if(i_sec < 10) {
+		                  snprintf(tmp,sizeof(tmp),"0%d",i_sec);
+		              }
+		              else {
+		                  snprintf(tmp,sizeof(tmp),"%d",i_sec);
+		              }
+		              strLine.replace(i_sec_pos, 2, tmp, 2);
+					  int i_min = atoi(str_min.c_str());
+					  i_min += iAddMin;
+					  if(i_min >= 10) {
+					      snprintf(tmp,sizeof(tmp),"%d",i_min);
+					      strLine.replace(i_min_pos, 2, tmp, 2);
+					  }
+					  else if(i_min >= 0) {
+					      snprintf(tmp,sizeof(tmp),"0%d",i_min);
+					      strLine.replace(i_min_pos, 2, tmp, 2);
+					  }
+					  else {
+					      iAddHour = -1 + i_min/60;
+						  i_min += (-1)*iAddHour*60;
+						  if(i_min < 10) {
+		                      snprintf(tmp,sizeof(tmp),"0%d",i_min);
+		                  }
+		                  else {
+		                      snprintf(tmp,sizeof(tmp),"%d",i_min);
+		                  }
+		                  strLine.replace(i_min_pos, 2, tmp, 2);
+						  int i_hour = atoi(str_hour.c_str());
+		                  i_hour += iAddHour;
+						  if(i_hour >= 0) {
+						      snprintf(tmp,sizeof(tmp),"%d",i_hour);
+		                      strLine.replace(i_hour_pos, 1, tmp, 1);
+						  }
+						  else {  //时间不够ahead
+							  char err[64] = {0};
+							  snprintf(err,sizeof(err),"---error: oldLine[%d]:(can not ahead %ds)---",iLineNum,iOpSec);
+							  strLine = err;
+							  cout << strLine << endl;
+							  break;
+						  }
+					  }
+				  }
+			  }
 		  }
 		  //cout << "---newLine[" << iLineNum << "]:(" << strLine << ")---" << endl;
 	  }
-	  ofile2 << strLine << endl;
+	  ofile << strLine << endl;
 	  iLineNum++;
   }
   iofile.close();
-  ofile2.close();
+  ofile.close();
   
-  cout << "---###---func myFileOp() end---" << endl;
+  cout << "---###---func myAssFileOp() end---" << endl;
+  system("PAUSE");
+  return;
+}
+
+void mySrtFileOp(string p_strOpFileName = "", string p_strRetFileName = "", int p_iOpSec = 0) {
+  cout << "---###---func mySrtFileOp() start---" << endl;
+  
+  string strOpFileName, strRetFileName;
+  int iOpSec = 0;
+  
+  if(p_strOpFileName == "") {
+      cout << "---input strOpFileName---" << endl;
+      cin >> strOpFileName;
+  }
+  else {
+      strOpFileName = p_strOpFileName;
+  }
+  if(p_strRetFileName == "") {
+      cout << "---input strRetFileName---" << endl;
+      cin >> strRetFileName;
+  }
+  else {
+      strRetFileName = p_strRetFileName;
+  }
+  if(p_iOpSec == 0) {
+      cout << "---input iOpSec[>0:delay <0:ahead]---" << endl;
+      cin >> iOpSec;  //>0:delay <0:ahead
+  }
+  else {
+      iOpSec = p_iOpSec;
+  }
+  if(iOpSec == 0) {
+      cout << "---error: param:opSec=0---" << endl;
+      return;
+  }
+  
+  strOpFileName += ".srt";
+  strRetFileName += ".srt";
+  
+  fstream iofile(strOpFileName.c_str());  //0-定位在开头 //等同:iofile.open("c:\\config.sys"); 等同:iofile.open("c:\\config.sys",ios::in|ios::out,0);
+  if(!iofile) {  //重载了!运算符
+      cout << "---error: open " << strOpFileName << " fail" << "---" << endl;
+      return;
+  }
+  ofstream ofile;
+  ofile.open(strRetFileName.c_str());  //等同:ios::out|ios::trunc
+  if(!ofile) {  //重载了!运算符
+      cout << "---error: open " << strRetFileName << " fail" << "---" << endl;
+      return;
+  }
+  
+  //00:00:22,500 --> 00:00:24,100
+  string strLine;
+  int iLineNum = 1;
+  string strFlag = "-->";
+  while(getline(iofile, strLine)) {
+      if(strLine.find(strFlag) != string::npos) {
+		  int i_b_hour_pos = 0;
+		  int i_b_min_pos = 3;
+		  int i_b_sec_pos = 6;
+		  int i_e_hour_pos = 17;
+		  int i_e_min_pos = 20;
+		  int i_e_sec_pos = 23;
+		  string str_b_hour = strLine.substr(i_b_hour_pos,2);
+		  string str_b_min = strLine.substr(i_b_min_pos,2);
+		  string str_b_sec = strLine.substr(i_b_sec_pos,2);
+		  string str_e_hour = strLine.substr(i_e_hour_pos,2);
+		  string str_e_min = strLine.substr(i_e_min_pos,2);
+		  string str_e_sec = strLine.substr(i_e_sec_pos,2);
+		  //cout << "---oldLine[" << iLineNum << "]:(" << strLine << ")---" << endl;
+		  //cout << "---oldLine[" << iLineNum << "]:(" << str_b_hour << ":" << str_b_min << ":" << str_b_sec << "," << str_e_hour << ":" << str_e_min << ":" << str_e_sec << ")---" << endl;
+		  
+		  int iAddMin = 0;
+		  int iAddHour = 0;
+		  int i_sec_pos, i_min_pos, i_hour_pos;
+		  string str_sec, str_min, str_hour;
+		  char tmp[8] = {};
+		  for(int i=0; i<2; i++) {
+		      if(i == 0) {
+			      i_sec_pos = i_b_sec_pos;
+				  i_min_pos = i_b_min_pos;
+				  i_hour_pos = i_b_hour_pos;
+				  str_sec = str_b_sec;
+				  str_min = str_b_min;
+				  str_hour = str_b_hour;
+			  }
+			  else {
+			      i_sec_pos = i_e_sec_pos;
+				  i_min_pos = i_e_min_pos;
+				  i_hour_pos = i_e_hour_pos;
+				  str_sec = str_e_sec;
+				  str_min = str_e_min;
+				  str_hour = str_e_hour;
+			  }
+			  
+			  if(iOpSec > 0) {  //delay iOpSec seconds
+			      int i_sec = atoi(str_sec.c_str());
+		          i_sec += iOpSec;
+		          iAddMin = i_sec/60;
+		          i_sec %= 60;
+		          if(i_sec < 10) {
+		              snprintf(tmp,sizeof(tmp),"0%d",i_sec);
+		          }
+		          else {
+		              snprintf(tmp,sizeof(tmp),"%d",i_sec);
+		          }
+		          strLine.replace(i_sec_pos, 2, tmp, 2);
+		          if(iAddMin > 0) {
+		              int i_min = atoi(str_min.c_str());
+		              i_min += iAddMin;
+		              iAddHour = i_min/60;
+		              i_min %= 60;
+		              if(i_min < 10) {
+		                  snprintf(tmp,sizeof(tmp),"0%d",i_min);
+		              }
+		              else {
+		                  snprintf(tmp,sizeof(tmp),"%d",i_min);
+		              }
+		              strLine.replace(i_min_pos, 2, tmp, 2);
+		              if(iAddHour > 0) {
+		                  int i_hour = atoi(str_hour.c_str());
+		                  i_hour += iAddHour;
+						   if(i_hour < 10) {
+		                       snprintf(tmp,sizeof(tmp),"0%d",i_hour);
+		                   }
+		                   else {
+		                       snprintf(tmp,sizeof(tmp),"%d",i_hour);
+		                   }
+		                  strLine.replace(i_hour_pos, 2, tmp, 2);
+		              }
+		          }
+			  }
+			  else {  //ahead iOpSec seconds
+			      int i_sec = atoi(str_sec.c_str());
+				  i_sec += iOpSec;
+				  if(i_sec >= 10) {
+				      snprintf(tmp,sizeof(tmp),"%d",i_sec);
+					  strLine.replace(i_sec_pos, 2, tmp, 2);
+				  }
+				  else if(i_sec >= 0) {
+				      snprintf(tmp,sizeof(tmp),"0%d",i_sec);
+					  strLine.replace(i_sec_pos, 2, tmp, 2);
+				  }
+				  else {
+				      iAddMin = -1 + i_sec/60;
+					  i_sec += (-1)*iAddMin*60;
+					  if(i_sec < 10) {
+		                  snprintf(tmp,sizeof(tmp),"0%d",i_sec);
+		              }
+		              else {
+		                  snprintf(tmp,sizeof(tmp),"%d",i_sec);
+		              }
+		              strLine.replace(i_sec_pos, 2, tmp, 2);
+					  int i_min = atoi(str_min.c_str());
+					  i_min += iAddMin;
+					  if(i_min >= 10) {
+					      snprintf(tmp,sizeof(tmp),"%d",i_min);
+					      strLine.replace(i_min_pos, 2, tmp, 2);
+					  }
+					  else if(i_min >= 0) {
+					      snprintf(tmp,sizeof(tmp),"0%d",i_min);
+					      strLine.replace(i_min_pos, 2, tmp, 2);
+					  }
+					  else {
+					      iAddHour = -1 + i_min/60;
+						  i_min += (-1)*iAddHour*60;
+						  if(i_min < 10) {
+		                      snprintf(tmp,sizeof(tmp),"0%d",i_min);
+		                  }
+		                  else {
+		                      snprintf(tmp,sizeof(tmp),"%d",i_min);
+		                  }
+		                  strLine.replace(i_min_pos, 2, tmp, 2);
+						  int i_hour = atoi(str_hour.c_str());
+		                  i_hour += iAddHour;
+						  if(i_hour >= 10) {
+						      snprintf(tmp,sizeof(tmp),"%d",i_hour);
+		                      strLine.replace(i_hour_pos, 2, tmp, 2);
+						  }
+						  else if(i_hour >= 0) {
+						      snprintf(tmp,sizeof(tmp),"0%d",i_hour);
+		                      strLine.replace(i_hour_pos, 2, tmp, 2);
+						  }
+						  else {  //时间不够ahead
+							  char err[64] = {0};
+							  snprintf(err,sizeof(err),"---error: oldLine[%d]:(can not ahead %ds)---",iLineNum,iOpSec);
+							  strLine = err;
+							  cout << strLine << endl;
+							  break;
+						  }
+					  }
+				  }
+			  }
+		  }
+		  //cout << "---newLine[" << iLineNum << "]:(" << strLine << ")---" << endl;
+	  }
+	  ofile << strLine << endl;
+	  iLineNum++;
+  }
+  iofile.close();
+  ofile.close();
+  
+  cout << "---###---func mySrtFileOp() end---" << endl;
   system("PAUSE");
   return;
 }
@@ -1696,7 +2000,29 @@ void myPokerTestG() {
 int main(int argc, char *argv[])
 {
       //testMysqlEscape();
-	  myFileOp();
+	  //myFileOp();
+	  //myAssFileOp();
+	  
+	  /* 处理电影srt字幕
+	  map<string, string> mapSrtFile;
+	  mapSrtFile["the.wire.s02e01.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E01.Ebb.Tide.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e02.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E02.Collateral.Damage.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e03.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E03.Hot.Shots.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e04.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E04.Hard.Cases.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e05.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E05.Undertow.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e06.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E06.All.Prologue.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e07.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E07.Backwash.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e08.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E08.Duck.and.Cover.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e09.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E09.Stray.Rounds.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e10.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E10.Storm.Warnings.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e11.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E11.Bad.Dreams.720p.WEB-DL.DD5.1.H.264-NTb";
+	  mapSrtFile["the.wire.s02e12.dvdrip.xvid-ffndvd.chs"] = "The.Wire.S02E12.Port.in.a.Storm.720p.WEB-DL.DD5.1.H.264-NTb";
+	  for(map<string, string>::iterator it=mapSrtFile.begin(); it!=mapSrtFile.end(); it++) {
+	      mySrtFileOp(it->first, it->second, -1);
+	  }
+	  */
+	  mySrtFileOp();
+	  
 	  //myTime();
       
       //puzzleA();
