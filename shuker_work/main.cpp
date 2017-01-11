@@ -88,17 +88,33 @@ void myFileOp() {
   return;
 }
 
-void myAssFileOp() {
+void myAssFileOp(string p_strOpFileName = "", string p_strRetFileName = "", int p_iOpSec = 0) {
   cout << "---###---func myAssFileOp() start---" << endl;
   
   string strOpFileName, strRetFileName;
   int iOpSec = 0;
-  cout << "---input strOpFileName---" << endl;
-  cin >> strOpFileName;
-  cout << "---input strRetFileName---" << endl;
-  cin >> strRetFileName;
-  cout << "---input iOpSec[>0:delay <0:ahead]---" << endl;
-  cin >> iOpSec;  //>0:delay <0:ahead
+  
+  if(p_strOpFileName == "") {
+      cout << "---input strOpFileName---" << endl;
+      cin >> strOpFileName;
+  }
+  else {
+      strOpFileName = p_strOpFileName;
+  }
+  if(p_strRetFileName == "") {
+      cout << "---input strRetFileName---" << endl;
+      cin >> strRetFileName;
+  }
+  else {
+      strRetFileName = p_strRetFileName;
+  }
+  if(p_iOpSec == 0) {
+      cout << "---input iOpSec[>0:delay <0:ahead]---" << endl;
+      cin >> iOpSec;  //>0:delay <0:ahead
+  }
+  else {
+      iOpSec = p_iOpSec;
+  }
   if(iOpSec == 0) {
       cout << "---error: param:opSec=0---" << endl;
       return;
@@ -2001,6 +2017,29 @@ int main(int argc, char *argv[])
 {
       //testMysqlEscape();
 	  //myFileOp();
+	  
+	  /* 处理电影ass字幕
+	  map<string, string> mapAssFile;
+	  mapAssFile["Breaking.Bad.S05E01.Live.Free.or.Die.720p.WEB-DL.DD5.1.H.264-CtrlHD.chs&eng"] = "Breaking Bad - S05E01 - Live Free or Die";
+	  mapAssFile["Breaking.Bad.S05E02.Madrigal.720p.WEB-DL.DD5.1.H.264-CtrlHD.chs&eng"] = "Breaking Bad - S05E02 - Madrigal";
+	  mapAssFile["Breaking.Bad.S05E03.Hazard.Pay.720p.WEB-DL.DD5.1.H.264-CtrlHD.chs&eng"] = "Breaking Bad - S05E03 - Hazard Pay";
+	  mapAssFile["Breaking.Bad.S05E04.Fifty-One.720p.WEB-DL.DD5.1.H.264-CtrlHD.chs&eng"] = "Breaking Bad - S05E04 - Fifty-One";
+	  mapAssFile["Breaking.Bad.S05E05.Dead.Freight.720p.WEB-DL.DD5.1.H.264-CtrlHD.chs&eng"] = "Breaking Bad - S05E05 - Dead Freight";
+	  mapAssFile["Breaking.Bad.S05E06.Buyout.720p.WEB-DL.DD5.1.H.264-CtrlHD.chs&eng"] = "Breaking Bad - S05E06 - Buyout";
+	  mapAssFile["Breaking.Bad.S05E07.Say.My.Name.720p.WEB-DL.DD5.1.H.264-CtrlHD.chs&eng"] = "Breaking Bad - S05E07 - Say My Name";
+	  mapAssFile["Breaking.Bad.S05E08.Gliding.Over.All.720p.WEB-DL.DD5.1.H.264-CtrlHD.chs&eng"] = "Breaking Bad - S05E08 - Gliding Over All";
+	  mapAssFile["Breaking.Bad.S05E09.Blood.Money.720p.WEB-DL.DD5.1.H.264-BS.chs&eng"] = "Breaking Bad - S05E09 - Blood Money";
+	  mapAssFile["Breaking.Bad.S05E10.Buried.720p.WEB-DL.DD5.1.H.264-BS.chs&eng"] = "Breaking Bad - S05E10 - Buried";
+	  mapAssFile["Breaking.Bad.S05E11.Confessions.720p.WEB-DL.DD5.1.H.264-BS.chs&eng"] = "Breaking Bad - S05E11 - Confessions";
+	  mapAssFile["Breaking.Bad.S05E12.Rabid Dog.720p.WEB-DL.DD5.1.H.264-BS.chs&eng"] = "Breaking Bad - S05E12 - Rabid Dog";
+	  mapAssFile["Breaking.Bad.S05E13.To'hajiilee.720p.WEB-DL.DD5.1.H.264-BS.chs&eng"] = "Breaking Bad - S05E13 - To'Hajiilee";
+	  mapAssFile["Breaking.Bad.S05E14.Ozymandias.720p.WEB-DL.DD5.1.H.264-BS.chs&eng"] = "Breaking Bad - S05E14 - Ozymandias";
+	  mapAssFile["Breaking.Bad.S05E15.Granite.Slate.720p.WEB-DL.DD5.1.H.264-BS.chs&eng"] = "Breaking Bad - S05E15 - Granite State";
+	  mapAssFile["Breaking.Bad.S05E16.Felina.720p.WEB-DL.DD5.1.H.264-BS.chs&eng"] = "Breaking Bad - S05E16 - Felina";
+	  for(map<string, string>::iterator it=mapAssFile.begin(); it!=mapAssFile.end(); it++) {
+	      myAssFileOp(it->first, it->second, 1);
+	  }
+	  */
 	  //myAssFileOp();
 	  
 	  /* 处理电影srt字幕
@@ -2021,7 +2060,7 @@ int main(int argc, char *argv[])
 	      mySrtFileOp(it->first, it->second, -1);
 	  }
 	  */
-	  mySrtFileOp();
+	  //mySrtFileOp();
 	  
 	  //myTime();
       
